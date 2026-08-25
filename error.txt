@@ -1,0 +1,8 @@
+Your theme isn't set to use Theme.AppCompat or Theme.MaterialComponents.
+I/flutter ( 8348): Please make sure you follow all the steps detailed inside the README: https://github.com/flutter-stripe/flutter_stripe#android
+I/flutter ( 8348): If you continue to have trouble, follow this discussion to get some support https://github.com/flutter-stripe/flutter_stripe/discussions/538, null, null)
+I/Choreographer( 8348): Skipped 73 frames!  The application may be doing too much work on its main thread.
+I/flutter ( 8348): Error processing payment: PlatformException(flutter_stripe initialization failed, The plugin failed to initialize:
+I/flutter ( 8348): Your theme isn't set to use Theme.AppCompat or Theme.MaterialComponents.
+I/flutter ( 8348): Please make sure you follow all the steps detailed inside the README: https://github.com/flutter-stripe/flutter_stripe#android
+I/flutter ( 8348): If you continue to have trouble, follow this discussion to get some support https://github.com/flutter-stripe/flutter_stripe/discussions/538, null, null) same error showing fiux this
