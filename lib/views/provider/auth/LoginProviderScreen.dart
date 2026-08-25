@@ -28,6 +28,27 @@ class _LoginScreenState extends State<LoginProviderScreen> {
   final TextEditingController _emailOrPhoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedCredentials();
+  }
+
+  Future<void> _loadSavedCredentials() async {
+    final remember = await StorageService.getRememberMe('provider');
+    if (remember) {
+      final email = await StorageService.getSavedEmail('provider');
+      final password = await StorageService.getSavedPassword('provider');
+      if (email != null) _emailOrPhoneController.text = email;
+      if (password != null) _passwordController.text = password;
+      if (mounted) {
+        setState(() {
+          _rememberMe = true;
+        });
+      }
+    }
+  }
+
   final String _loginApiUrl = "${ApiService.BASE_URL}/api/providers/login";
   String t(String key) => AppTranslations.translateValue(key);
 
@@ -75,12 +96,11 @@ class _LoginScreenState extends State<LoginProviderScreen> {
         final prefs = await SharedPreferences.getInstance();
         prefs.setBool('isLoggedIn', true);
 
+        await StorageService.saveRememberMe('provider', _rememberMe);
         if (_rememberMe) {
-          await prefs.setString("email", email);
-          await prefs.setString("password", password);
+          await StorageService.saveSavedCredentials('provider', email, password);
         } else {
-          await prefs.remove("email");
-          await prefs.remove("password");
+          await StorageService.clearSavedCredentials('provider');
         }
 
         Get.offNamed(AppRoutes.providerBottomNavScreen);

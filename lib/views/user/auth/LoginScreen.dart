@@ -36,6 +36,27 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
   final socialLoginApiUrl =
       "${ApiService.BASE_URL}/api/auth/social/direct-login";
 
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedCredentials();
+  }
+
+  Future<void> _loadSavedCredentials() async {
+    final remember = await StorageService.getRememberMe('user');
+    if (remember) {
+      final email = await StorageService.getSavedEmail('user');
+      final password = await StorageService.getSavedPassword('user');
+      if (email != null) emailOrPhoneController.text = email;
+      if (password != null) passController.text = password;
+      if (mounted) {
+        setState(() {
+          _rememberMe = true;
+        });
+      }
+    }
+  }
+
   String t(String key) => AppTranslations.translateValue(key);
   String _normalizeRole(String? role) {
     final value = (role ?? '').trim().toLowerCase();
@@ -134,9 +155,15 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isLoggedIn', true);
 
-    if (!_rememberMe) {
-      await prefs.remove("email");
-      await prefs.remove("password");
+    await StorageService.saveRememberMe('user', _rememberMe);
+    if (_rememberMe) {
+      await StorageService.saveSavedCredentials(
+        'user',
+        emailOrPhoneController.text.trim(),
+        passController.text.trim(),
+      );
+    } else {
+      await StorageService.clearSavedCredentials('user');
     }
 
     final String targetRoute =
@@ -451,60 +478,60 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                     },
                   ),
 
-                  const SizedBox(height: 24),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Divider(color: Colors.grey[300], thickness: 1),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        child: Text(
-                          t('auth.or_continue_with'),
-                          style: TextStyle(fontSize: 13, color: Colors.black54),
-                        ),
-                      ),
-                      Expanded(
-                        child: Divider(color: Colors.grey[300], thickness: 1),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: Colors.grey[300]!),
-                          borderRadius: BorderRadius.circular(28),
-                        ),
-                        child: IconButton(
-                          onPressed: isLoading ? null : _loginWithGoogle,
-                          icon: Image.network(
-                            'https://www.google.com/favicon.ico',
-                            width: 24,
-                            height: 24,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Text(
-                                AppTranslations.translateValue('G'),
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.blue,
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  // const SizedBox(height: 24),
+                  //
+                  // Row(
+                  //   children: [
+                  //     Expanded(
+                  //       child: Divider(color: Colors.grey[300], thickness: 1),
+                  //     ),
+                  //     Padding(
+                  //       padding: EdgeInsets.symmetric(horizontal: 16),
+                  //       child: Text(
+                  //         t('auth.or_continue_with'),
+                  //         style: TextStyle(fontSize: 13, color: Colors.black54),
+                  //       ),
+                  //     ),
+                  //     Expanded(
+                  //       child: Divider(color: Colors.grey[300], thickness: 1),
+                  //     ),
+                  //   ],
+                  // ),
+                  //
+                  // const SizedBox(height: 24),
+                  //
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     Container(
+                  //       width: 56,
+                  //       height: 56,
+                  //       decoration: BoxDecoration(
+                  //         color: Colors.white,
+                  //         border: Border.all(color: Colors.grey[300]!),
+                  //         borderRadius: BorderRadius.circular(28),
+                  //       ),
+                  //       child: IconButton(
+                  //         onPressed: isLoading ? null : _loginWithGoogle,
+                  //         icon: Image.network(
+                  //           'https://www.google.com/favicon.ico',
+                  //           width: 24,
+                  //           height: 24,
+                  //           errorBuilder: (context, error, stackTrace) {
+                  //             return Text(
+                  //               AppTranslations.translateValue('G'),
+                  //               style: TextStyle(
+                  //                 fontSize: 24,
+                  //                 fontWeight: FontWeight.bold,
+                  //                 color: Colors.blue,
+                  //               ),
+                  //             );
+                  //           },
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
 
                   const SizedBox(height: 24),
 

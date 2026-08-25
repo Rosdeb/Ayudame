@@ -4,6 +4,7 @@ import 'package:middle_ware/core/localization/app_translations.dart';
 import 'package:middle_ware/core/localization/locale_controller.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'WelcomeScreen.dart';
+import 'package:middle_ware/services/storage_service.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -16,6 +17,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   bool privacyAccepted = false;
   bool termsAccepted = false;
   final LocaleController _localeController = Get.find<LocaleController>();
+
+  @override
+  void initState() {
+    super.initState();
+    _checkTermsStatus();
+  }
+
+  Future<void> _checkTermsStatus() async {
+    final accepted = await StorageService.isTermsAccepted();
+    if (accepted && mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const WelcomeScreen(),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -166,10 +185,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           : AppTranslations.englishLocale,
     );
 
-    setState(() {
-      privacyAccepted = false;
-    });
-    _showPrivacyPolicyDialog(context, language);
+    final termsAlreadyAccepted = await StorageService.isTermsAccepted();
+    if (!context.mounted) return;
+
+    if (termsAlreadyAccepted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const WelcomeScreen(),
+        ),
+      );
+    } else {
+      setState(() {
+        privacyAccepted = false;
+      });
+      _showPrivacyPolicyDialog(context, language);
+    }
   }
 
   void _showPrivacyPolicyDialog(BuildContext context, String language) {
@@ -604,7 +635,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: termsAccepted
-                            ? () {
+                            ? () async {
+                                await StorageService.saveTermsAccepted(true);
+                                if (!context.mounted) return;
                                 Navigator.of(context).pop();
                                 Navigator.pushReplacement(
                                   context,

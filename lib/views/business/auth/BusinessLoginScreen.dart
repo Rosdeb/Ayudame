@@ -5,6 +5,8 @@ import '../../../viewmodels/business_auth_viewmodel.dart';
 import '../../../core/routes/app_routes.dart';
 import 'package:middle_ware/core/localization/app_translations.dart';
 
+
+
 class BusinessLoginScreen extends StatefulWidget {
   const BusinessLoginScreen({super.key});
 
@@ -231,60 +233,60 @@ class _BusinessLoginScreenState extends State<BusinessLoginScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 24),
+                // const SizedBox(height: 24),
+                //
+                // Row(
+                //   children: [
+                //     Expanded(
+                //       child: Divider(color: Colors.grey[300], thickness: 1),
+                //     ),
+                //     Padding(
+                //       padding: EdgeInsets.symmetric(horizontal: 16),
+                //       child: Text(
+                //         t('auth.or_continue_with'),
+                //         style: TextStyle(fontSize: 13, color: Colors.black54),
+                //       ),
+                //     ),
+                //     Expanded(
+                //       child: Divider(color: Colors.grey[300], thickness: 1),
+                //     ),
+                //   ],
+                // ),
 
-                Row(
-                  children: [
-                    Expanded(
-                      child: Divider(color: Colors.grey[300], thickness: 1),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        t('auth.or_continue_with'),
-                        style: TextStyle(fontSize: 13, color: Colors.black54),
-                      ),
-                    ),
-                    Expanded(
-                      child: Divider(color: Colors.grey[300], thickness: 1),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 24),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.grey[300]!),
-                        borderRadius: BorderRadius.circular(28),
-                      ),
-                      child: IconButton(
-                        onPressed: () {},
-                        icon: Image.network(
-                          'https://www.google.com/favicon.ico',
-                          width: 24,
-                          height: 24,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Text(
-                              AppTranslations.translateValue('G'),
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blue,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                // const SizedBox(height: 24),
+                //
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     Container(
+                //       width: 56,
+                //       height: 56,
+                //       decoration: BoxDecoration(
+                //         color: Colors.white,
+                //         border: Border.all(color: Colors.grey[300]!),
+                //         borderRadius: BorderRadius.circular(28),
+                //       ),
+                //       child: IconButton(
+                //         onPressed: () {},
+                //         icon: Image.network(
+                //           'https://www.google.com/favicon.ico',
+                //           width: 24,
+                //           height: 24,
+                //           errorBuilder: (context, error, stackTrace) {
+                //             return Text(
+                //               AppTranslations.translateValue('G'),
+                //               style: TextStyle(
+                //                 fontSize: 24,
+                //                 fontWeight: FontWeight.bold,
+                //                 color: Colors.blue,
+                //               ),
+                //             );
+                //           },
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
 
                 const SizedBox(height: 24),
 

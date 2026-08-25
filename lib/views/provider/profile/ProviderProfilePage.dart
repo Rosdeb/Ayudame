@@ -19,6 +19,7 @@ import '../../../controller/provider/profile/provider_profile_controller.dart';
 import '../../../controller/provider/home_provider_controller.dart';
 import '../../../utils/token_service.dart';
 import 'package:middle_ware/core/localization/app_translations.dart';
+import 'package:middle_ware/services/storage_service.dart';
 
 class ProviderProfilePage extends StatefulWidget {
   const ProviderProfilePage({Key? key}) : super(key: key);
@@ -581,12 +582,9 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () async {
-                          // Clear the token
+                          // Clear session using StorageService.clearAll
                           await TokenService().clearToken();
-
-                          // Clear the isLoggedIn flag
-                          final prefs = await SharedPreferences.getInstance();
-                          await prefs.remove('isLoggedIn');
+                          await StorageService.clearAll();
 
                           // Close dialog
                           Navigator.of(context).pop();

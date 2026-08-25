@@ -8,8 +8,7 @@ import '../../../models/user/profile/profile_model.dart';
 import '../../../utils/token_service.dart';
 import '../../../utils/constants.dart';
 import 'package:middle_ware/services/api_service.dart';
-
-
+import 'package:middle_ware/services/storage_service.dart';
 
 class ProfileController extends GetxController {
   var isLoading = false.obs;
@@ -152,14 +151,7 @@ class ProfileController extends GetxController {
 
   Future<void> logout() async {
     await TokenService().clearToken();
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove("email");
-    await prefs.remove("password");
-    await prefs.remove("isLoggedIn");
-
+    await StorageService.clearAll();
     Get.offAllNamed(AppRoutes.userTypeSelection);
   }
-
-
 }

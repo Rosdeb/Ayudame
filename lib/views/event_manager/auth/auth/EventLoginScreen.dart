@@ -4,6 +4,7 @@ import 'package:middle_ware/core/localization/app_translations.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import '../../../../core/routes/app_routes.dart';
 import '../../../../viewmodels/event_manager_viewmodel.dart';
+import '../../../../services/storage_service.dart';
 
 class EventLoginScreen extends StatefulWidget {
   const EventLoginScreen({super.key});
@@ -19,6 +20,27 @@ class _LoginScreenState extends State<EventLoginScreen> {
 
   bool _rememberMe = false;
   bool _obscurePassword = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedCredentials();
+  }
+
+  Future<void> _loadSavedCredentials() async {
+    final remember = await StorageService.getRememberMe('event_manager');
+    if (remember) {
+      final email = await StorageService.getSavedEmail('event_manager');
+      final password = await StorageService.getSavedPassword('event_manager');
+      if (email != null) _emailController.text = email;
+      if (password != null) _passwordController.text = password;
+      if (mounted) {
+        setState(() {
+          _rememberMe = true;
+        });
+      }
+    }
+  }
   String t(String key) => AppTranslations.translateValue(key);
 
   @override
@@ -219,7 +241,20 @@ class _LoginScreenState extends State<EventLoginScreen> {
                               _viewModel.login(
                                 email: _emailController.text.trim(),
                                 password: _passwordController.text,
-                              );
+                              ).then((_) async {
+                                if (_viewModel.isLoggedIn.value) {
+                                  await StorageService.saveRememberMe('event_manager', _rememberMe);
+                                  if (_rememberMe) {
+                                    await StorageService.saveSavedCredentials(
+                                      'event_manager',
+                                      _emailController.text.trim(),
+                                      _passwordController.text,
+                                    );
+                                  } else {
+                                    await StorageService.clearSavedCredentials('event_manager');
+                                  }
+                                }
+                              });
                             },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF1C5941),
@@ -249,98 +284,98 @@ class _LoginScreenState extends State<EventLoginScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 24),
+                //const SizedBox(height: 24),
 
-                Row(
-                  children: [
-                    Expanded(
-                      child: Divider(color: Colors.grey[300], thickness: 1),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: Text(
-                        t('auth.or_continue_with'),
-                        style: TextStyle(fontSize: 13, color: Colors.black54),
-                      ),
-                    ),
-                    Expanded(
-                      child: Divider(color: Colors.grey[300], thickness: 1),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 24),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.grey[300]!),
-                        borderRadius: BorderRadius.circular(28),
-                      ),
-                      child: IconButton(
-                        onPressed: () {},
-                        icon: Image.network(
-                          'https://www.google.com/favicon.ico',
-                          width: 24,
-                          height: 24,
-                          errorBuilder: (context, error, stackTrace) {
-                            return const Text(
-                              'G',
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blue,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.grey[300]!),
-                        borderRadius: BorderRadius.circular(28),
-                      ),
-                      child: IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.apple,
-                          size: 28,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.grey[300]!),
-                        borderRadius: BorderRadius.circular(28),
-                      ),
-                      child: IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.facebook,
-                          size: 28,
-                          color: Color(0xFF1877F2),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                // Row(
+                //   children: [
+                //     Expanded(
+                //       child: Divider(color: Colors.grey[300], thickness: 1),
+                //     ),
+                //     Padding(
+                //       padding: EdgeInsets.symmetric(horizontal: 16),
+                //       child: Text(
+                //         t('auth.or_continue_with'),
+                //         style: TextStyle(fontSize: 13, color: Colors.black54),
+                //       ),
+                //     ),
+                //     Expanded(
+                //       child: Divider(color: Colors.grey[300], thickness: 1),
+                //     ),
+                //   ],
+                // ),
+                //
+                // const SizedBox(height: 24),
+                //
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     Container(
+                //       width: 56,
+                //       height: 56,
+                //       decoration: BoxDecoration(
+                //         color: Colors.white,
+                //         border: Border.all(color: Colors.grey[300]!),
+                //         borderRadius: BorderRadius.circular(28),
+                //       ),
+                //       child: IconButton(
+                //         onPressed: () {},
+                //         icon: Image.network(
+                //           'https://www.google.com/favicon.ico',
+                //           width: 24,
+                //           height: 24,
+                //           errorBuilder: (context, error, stackTrace) {
+                //             return const Text(
+                //               'G',
+                //               style: TextStyle(
+                //                 fontSize: 24,
+                //                 fontWeight: FontWeight.bold,
+                //                 color: Colors.blue,
+                //               ),
+                //             );
+                //           },
+                //         ),
+                //       ),
+                //     ),
+                //     const SizedBox(width: 16),
+                //
+                //     Container(
+                //       width: 56,
+                //       height: 56,
+                //       decoration: BoxDecoration(
+                //         color: Colors.white,
+                //         border: Border.all(color: Colors.grey[300]!),
+                //         borderRadius: BorderRadius.circular(28),
+                //       ),
+                //       child: IconButton(
+                //         onPressed: () {},
+                //         icon: const Icon(
+                //           Icons.apple,
+                //           size: 28,
+                //           color: Colors.black,
+                //         ),
+                //       ),
+                //     ),
+                //     const SizedBox(width: 16),
+                //
+                //     Container(
+                //       width: 56,
+                //       height: 56,
+                //       decoration: BoxDecoration(
+                //         color: Colors.white,
+                //         border: Border.all(color: Colors.grey[300]!),
+                //         borderRadius: BorderRadius.circular(28),
+                //       ),
+                //       child: IconButton(
+                //         onPressed: () {},
+                //         icon: const Icon(
+                //           Icons.facebook,
+                //           size: 28,
+                //           color: Color(0xFF1877F2),
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
 
                 const SizedBox(height: 24),
 

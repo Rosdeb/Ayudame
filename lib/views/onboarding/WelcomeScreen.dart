@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../../core/routes/app_routes.dart';
 import 'package:middle_ware/core/localization/app_translations.dart';
@@ -113,8 +114,14 @@ class WelcomeScreen extends StatelessWidget {
                           width: double.infinity,
                           height: 54,
                           child: ElevatedButton(
-                            onPressed: () {
-                              Get.offNamed(AppRoutes.location);
+                            onPressed: () async {
+                              LocationPermission permission = await Geolocator.checkPermission();
+                              if (permission == LocationPermission.always ||
+                                  permission == LocationPermission.whileInUse) {
+                                Get.offNamed(AppRoutes.userTypeSelection, arguments: {'signupFlow': true});
+                              } else {
+                                Get.offNamed(AppRoutes.location);
+                              }
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,

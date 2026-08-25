@@ -42,6 +42,18 @@ class BusinessAuthViewModel extends GetxController {
     checkAuthStatus();
     getBusinessInfo();
     getBusinessProfile();
+    _loadSavedCredentials();
+  }
+
+  Future<void> _loadSavedCredentials() async {
+    final remember = await StorageService.getRememberMe('business');
+    if (remember) {
+      rememberMe.value = true;
+      final email = await StorageService.getSavedEmail('business');
+      final password = await StorageService.getSavedPassword('business');
+      if (email != null) emailController.text = email;
+      if (password != null) passwordController.text = password;
+    }
   }
 
   void _handleError(dynamic e, {String prefix = "Error"}) {
@@ -149,6 +161,17 @@ class BusinessAuthViewModel extends GetxController {
         // Update current business
         currentBusiness.value = response.data!.business;
         isLoggedIn.value = true;
+
+        await StorageService.saveRememberMe('business', rememberMe.value);
+        if (rememberMe.value) {
+          await StorageService.saveSavedCredentials(
+            'business',
+            emailController.text.trim(),
+            passwordController.text,
+          );
+        } else {
+          await StorageService.clearSavedCredentials('business');
+        }
 
         // Show success message
         Get.snackbar(

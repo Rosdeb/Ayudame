@@ -272,63 +272,65 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     isLoading: isLoading,
                     onTap: _createUser,
                   ),
-                  const SizedBox(height: 24),
 
-                  // Or Continue With
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Divider(color: Colors.grey[300], thickness: 1),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        child: Text(
-                          t('auth.or_continue_with'),
-                          style: TextStyle(fontSize: 13, color: Colors.black54),
-                        ),
-                      ),
-                      Expanded(
-                        child: Divider(color: Colors.grey[300], thickness: 1),
-                      ),
-                    ],
-                  ),
 
                   const SizedBox(height: 24),
 
-                  // Social Login Buttons
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Google
-                      Container(
-                        width: 56,
-                        height: 56,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: Colors.grey[300]!),
-                          borderRadius: BorderRadius.circular(28),
-                        ),
-                        child: IconButton(
-                          onPressed: () {},
-                          icon: Image.network(
-                            'https://www.google.com/favicon.ico',
-                            width: 24,
-                            height: 24,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Text(
-                                AppTranslations.translateValue('G'),
-                                style: TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.blue,
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  // // Or Continue With
+                  // Row(
+                  //   children: [
+                  //     Expanded(
+                  //       child: Divider(color: Colors.grey[300], thickness: 1),
+                  //     ),
+                  //     Padding(
+                  //       padding: EdgeInsets.symmetric(horizontal: 16),
+                  //       child: Text(
+                  //         t('auth.or_continue_with'),
+                  //         style: TextStyle(fontSize: 13, color: Colors.black54),
+                  //       ),
+                  //     ),
+                  //     Expanded(
+                  //       child: Divider(color: Colors.grey[300], thickness: 1),
+                  //     ),
+                  //   ],
+                  // ),
+                  //
+                  // const SizedBox(height: 24),
+                  //
+                  // // Social Login Buttons
+                  // Row(
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     // Google
+                  //     Container(
+                  //       width: 56,
+                  //       height: 56,
+                  //       decoration: BoxDecoration(
+                  //         color: Colors.white,
+                  //         border: Border.all(color: Colors.grey[300]!),
+                  //         borderRadius: BorderRadius.circular(28),
+                  //       ),
+                  //       child: IconButton(
+                  //         onPressed: () {},
+                  //         icon: Image.network(
+                  //           'https://www.google.com/favicon.ico',
+                  //           width: 24,
+                  //           height: 24,
+                  //           errorBuilder: (context, error, stackTrace) {
+                  //             return Text(
+                  //               AppTranslations.translateValue('G'),
+                  //               style: TextStyle(
+                  //                 fontSize: 24,
+                  //                 fontWeight: FontWeight.bold,
+                  //                 color: Colors.blue,
+                  //               ),
+                  //             );
+                  //           },
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
 
                   const SizedBox(height: 24),
 

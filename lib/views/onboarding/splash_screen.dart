@@ -57,8 +57,16 @@ class _SplashScreenState extends State<SplashScreen> {
     if (token != null && token.isNotEmpty && targetRoute != null) {
       Navigator.pushReplacementNamed(context, targetRoute);
     } else {
-      // User is not logged in or role is missing, navigate to onboarding flow
-      Navigator.pushReplacementNamed(context, AppRoutes.onboarding);
+      // If terms have already been accepted, bypass onboarding language screen and go to WelcomeScreen
+      final termsAlreadyAccepted = await StorageService.isTermsAccepted();
+      if (!mounted) return;
+
+      if (termsAlreadyAccepted) {
+        Navigator.pushReplacementNamed(context, AppRoutes.welcome);
+      } else {
+        // User is not logged in or role is missing, navigate to onboarding flow
+        Navigator.pushReplacementNamed(context, AppRoutes.onboarding);
+      }
     }
   }
 
