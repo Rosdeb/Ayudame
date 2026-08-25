@@ -103,12 +103,12 @@ class _OTPVerificationForSignupState extends State<OTPVerificationForSignup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: AppColors.bgColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF5F5F5),
+        backgroundColor: AppColors.bgColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
           onPressed: () {
             Get.back();
           },
@@ -172,28 +172,28 @@ class _OTPVerificationForSignupState extends State<OTPVerificationForSignup> {
 
               const SizedBox(height: 20),
 
-              // Paste Code Link
-              TextButton(
-                onPressed: () async {
-                  final data = await Clipboard.getData('text/plain');
-                  if (data != null && data.text != null) {
-                    final code = data.text!.replaceAll(RegExp(r'[^0-9]'), '');
-                    if (code.length >= 6) {
-                      pinController.text = code.substring(0, 6);
-                    } else {
-                      pinController.text = code;
-                    }
-                  }
-                },
-                child: Text(
-                  AppTranslations.translateValue('Paste Code'),
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF1C5941),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
+              // // Paste Code Link
+              // TextButton(
+              //   onPressed: () async {
+              //     final data = await Clipboard.getData('text/plain');
+              //     if (data != null && data.text != null) {
+              //       final code = data.text!.replaceAll(RegExp(r'[^0-9]'), '');
+              //       if (code.length >= 6) {
+              //         pinController.text = code.substring(0, 6);
+              //       } else {
+              //         pinController.text = code;
+              //       }
+              //     }
+              //   },
+              //   child: Text(
+              //     AppTranslations.translateValue('Paste Code'),
+              //     style: TextStyle(
+              //       fontSize: 14,
+              //       color: Color(0xFF1C5941),
+              //       fontWeight: FontWeight.w600,
+              //     ),
+              //   ),
+              // ),
               const SizedBox(height: 24),
 
               CustomLoadingButton(

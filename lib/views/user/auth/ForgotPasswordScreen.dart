@@ -60,7 +60,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       if (response.statusCode == 200 || response.statusCode == 201) {
         Get.toNamed(
           AppRoutes.verificationCodeScreen,
-          arguments: {"email": email},
+          arguments: {"email": email, "isForgot": true},
         );
       } else {
         Get.snackbar("Failed", data['message'] ?? "Something went wrong");
@@ -83,7 +83,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         backgroundColor: const Color(0xFFF5F5F5),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
           onPressed: () {
             Get.back();
           },

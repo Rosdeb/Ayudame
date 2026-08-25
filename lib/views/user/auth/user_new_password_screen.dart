@@ -24,6 +24,16 @@ class _UserNewPasswordScreenState extends State<UserNewPasswordScreen> {
   final TextEditingController confirmPassController = TextEditingController();
   bool isLoading = false;
   final _formKey = GlobalKey<FormState>();
+  late String _resetToken;
+  late String _email;
+
+  @override
+  void initState() {
+    super.initState();
+    final args = Get.arguments ?? {};
+    _resetToken = args["resetToken"] ?? "";
+    _email = args["email"] ?? "";
+  }
 
   Future<bool> hasInternetConnection() async {
     final connectivityResult = await Connectivity().checkConnectivity();
@@ -51,6 +61,9 @@ class _UserNewPasswordScreenState extends State<UserNewPasswordScreen> {
     final body = {
       'newPassword': newPassword,
       'confirmPassword': confirmPassword,
+      if (_resetToken.isNotEmpty) 'resetToken': _resetToken,
+      if (_resetToken.isNotEmpty) 'token': _resetToken,
+      if (_email.isNotEmpty) 'email': _email,
     };
 
     setState(() {
@@ -60,7 +73,10 @@ class _UserNewPasswordScreenState extends State<UserNewPasswordScreen> {
     try {
       final response = await http.post(
         Uri.parse(updatePassUrl),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          if (_resetToken.isNotEmpty) 'Authorization': 'Bearer $_resetToken',
+        },
         body: jsonEncode(body),
       );
 
@@ -93,17 +109,23 @@ class _UserNewPasswordScreenState extends State<UserNewPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF5F5F5),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Get.back();
-          },
-        ),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (didPop) return;
+        Get.offAllNamed(AppRoutes.userlogin);
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.bgColor,
+        appBar: AppBar(
+          backgroundColor: AppColors.bgColor,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+            onPressed: () {
+              Get.offAllNamed(AppRoutes.userlogin);
+            },
+          ),
         title: Text(
           AppTranslations.translateValue('Update Password'),
           style: TextStyle(
@@ -204,6 +226,7 @@ class _UserNewPasswordScreenState extends State<UserNewPasswordScreen> {
           ),
         ),
       ),
+    ),
     );
   }
 }

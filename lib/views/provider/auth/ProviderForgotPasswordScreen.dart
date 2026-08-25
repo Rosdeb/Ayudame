@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import '../../../../core/routes/app_routes.dart';
-import '../../../utils/constants.dart';
 import 'package:middle_ware/services/api_service.dart';
 import '../../../widgets/custom_loading_button.dart';
 import 'package:middle_ware/core/localization/app_translations.dart';

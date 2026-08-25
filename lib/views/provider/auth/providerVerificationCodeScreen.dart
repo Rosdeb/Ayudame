@@ -140,7 +140,7 @@ class _ProviderVerificationCodeScreenState
     return Scaffold(
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF5F5F5),
+        backgroundColor: AppColors.bgColor,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
@@ -255,27 +255,27 @@ class _ProviderVerificationCodeScreenState
             ),
 
             const SizedBox(height: 20),
-
-            // Paste Code Link
-            TextButton(
-              onPressed: () async {
-                final data = await Clipboard.getData('text/plain');
-                if (data != null && data.text != null) {
-                  final code = data.text!.replaceAll(RegExp(r'[^0-9]'), '');
-                  for (int i = 0; i < code.length && i < 6; i++) {
-                    _controllers[i].text = code[i];
-                  }
-                }
-              },
-              child: Text(
-                AppTranslations.translateValue('Paste Code'),
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF1C5941),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
+            //
+            // // Paste Code Link
+            // TextButton(
+            //   onPressed: () async {
+            //     final data = await Clipboard.getData('text/plain');
+            //     if (data != null && data.text != null) {
+            //       final code = data.text!.replaceAll(RegExp(r'[^0-9]'), '');
+            //       for (int i = 0; i < code.length && i < 6; i++) {
+            //         _controllers[i].text = code[i];
+            //       }
+            //     }
+            //   },
+            //   child: Text(
+            //     AppTranslations.translateValue('Paste Code'),
+            //     style: TextStyle(
+            //       fontSize: 14,
+            //       color: Color(0xFF1C5941),
+            //       fontWeight: FontWeight.w600,
+            //     ),
+            //   ),
+            // ),
 
             const SizedBox(height: 24),
 

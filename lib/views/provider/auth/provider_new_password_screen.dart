@@ -124,7 +124,7 @@ class _ProviderNewPasswordScreenState extends State<ProviderNewPasswordScreen> {
         backgroundColor: const Color(0xFFF5F5F5),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
           onPressed: () {
             Get.back();
           },

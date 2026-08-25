@@ -347,7 +347,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 40),
+                  //const SizedBox(height: 40),
 
                   Text(
                     t('auth.welcome_back'),

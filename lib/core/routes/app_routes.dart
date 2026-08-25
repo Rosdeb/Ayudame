@@ -96,7 +96,7 @@ class AppRoutes {
   static const String userNotification = "/user_notification";
   static const String userBottomNavScreen = '/bottom_nav';
   static const String userHome = '/user-home';
-  static const String userNewPasswordScreen = '//user_new_password_screen';
+  static const String userNewPasswordScreen = '/user_new_password_screen';
   static const String userProfile = '/user-profile';
   static const String userEditProfile = '/user-edit-profile';
   static const String userCategories = '/user-categories';

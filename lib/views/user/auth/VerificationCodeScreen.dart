@@ -22,14 +22,16 @@ class VerificationCodeScreen extends StatefulWidget {
 
 class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
   late String email;
+  bool isForgot = false;
   bool isLoading = false;
   final TextEditingController pinController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    final args = Get.arguments;
-    email = args["email"];
+    final args = Get.arguments ?? {};
+    email = args["email"] ?? "";
+    isForgot = args["isForgot"] ?? false;
   }
 
   Future<bool> verifyUser(String email, String code) async {
@@ -60,13 +62,22 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
       final data = json.decode(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
+        final resetToken = data['data']?['resetToken'] ??
+            data['resetToken'] ??
+            data['data']?['token'] ??
+            data['token'];
+
         Get.snackbar(
           "Success",
           data["message"] ?? "OTP Verified successfully!",
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
-        Get.toNamed(AppRoutes.userNewPasswordScreen);
+
+        Get.offNamed(
+          AppRoutes.userNewPasswordScreen,
+          arguments: {"resetToken": resetToken, "email": email},
+        );
 
         return true;
       } else {
@@ -102,9 +113,9 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: AppColors.bgColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF5F5F5),
+        backgroundColor: AppColors.bgColor,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
@@ -170,28 +181,28 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
 
               const SizedBox(height: 20),
 
-              // Paste Code Link
-              TextButton(
-                onPressed: () async {
-                  final data = await Clipboard.getData('text/plain');
-                  if (data != null && data.text != null) {
-                    final code = data.text!.replaceAll(RegExp(r'[^0-9]'), '');
-                    if (code.length >= 6) {
-                      pinController.text = code.substring(0, 6);
-                    } else {
-                      pinController.text = code;
-                    }
-                  }
-                },
-                child: Text(
-                  AppTranslations.translateValue('Paste Code'),
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF1C5941),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
+              // // Paste Code Link
+              // TextButton(
+              //   onPressed: () async {
+              //     final data = await Clipboard.getData('text/plain');
+              //     if (data != null && data.text != null) {
+              //       final code = data.text!.replaceAll(RegExp(r'[^0-9]'), '');
+              //       if (code.length >= 6) {
+              //         pinController.text = code.substring(0, 6);
+              //       } else {
+              //         pinController.text = code;
+              //       }
+              //     }
+              //   },
+              //   child: Text(
+              //     AppTranslations.translateValue('Paste Code'),
+              //     style: TextStyle(
+              //       fontSize: 14,
+              //       color: Color(0xFF1C5941),
+              //       fontWeight: FontWeight.w600,
+              //     ),
+              //   ),
+              // ),
 
               const SizedBox(height: 24),
 
