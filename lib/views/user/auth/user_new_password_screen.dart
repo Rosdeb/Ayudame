@@ -40,7 +40,7 @@ class _UserNewPasswordScreenState extends State<UserNewPasswordScreen> {
     return connectivityResult != ConnectivityResult.none;
   }
 
-  final updatePassUrl = "${ApiService.BASE_URL}/api/auth/set-new-password";
+  final updatePassUrl = "${ApiService.BASE_URL}/api/auth/reset-password";
 
   Future<void> _setNewPassword(
     String newPassword,
@@ -59,11 +59,8 @@ class _UserNewPasswordScreenState extends State<UserNewPasswordScreen> {
     }
 
     final body = {
+      'resetToken': _resetToken,
       'newPassword': newPassword,
-      'confirmPassword': confirmPassword,
-      if (_resetToken.isNotEmpty) 'resetToken': _resetToken,
-      if (_resetToken.isNotEmpty) 'token': _resetToken,
-      if (_email.isNotEmpty) 'email': _email,
     };
 
     setState(() {
@@ -75,7 +72,6 @@ class _UserNewPasswordScreenState extends State<UserNewPasswordScreen> {
         Uri.parse(updatePassUrl),
         headers: {
           'Content-Type': 'application/json',
-          if (_resetToken.isNotEmpty) 'Authorization': 'Bearer $_resetToken',
         },
         body: jsonEncode(body),
       );
@@ -83,12 +79,7 @@ class _UserNewPasswordScreenState extends State<UserNewPasswordScreen> {
       final data = json.decode(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Get.snackbar(
-          'Success',
-          data["message"] ?? "updated successfully!",
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
+
         Get.offAllNamed(AppRoutes.userlogin);
       } else {
         Get.snackbar(

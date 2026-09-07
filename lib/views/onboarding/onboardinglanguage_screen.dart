@@ -380,7 +380,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               }
                             : null,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF9CCCA9),
+                          backgroundColor: const Color(0xFF006400),
                           foregroundColor: Colors.white,
                           disabledBackgroundColor: Colors.grey.shade300,
                           disabledForegroundColor: Colors.grey.shade500,
@@ -648,7 +648,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               }
                             : null,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF9CCCA9),
+                          backgroundColor: const Color(0xFF72DF8D),
                           foregroundColor: Colors.white,
                           disabledBackgroundColor: Colors.grey.shade300,
                           disabledForegroundColor: Colors.grey.shade500,

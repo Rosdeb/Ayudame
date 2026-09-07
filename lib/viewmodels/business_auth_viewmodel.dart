@@ -540,11 +540,9 @@ class BusinessAuthViewModel extends GetxController {
     try {
       final businessData = await _authService.getBusinessInfo();
       currentBusiness.value = BusinessModel.fromJson(businessData);
-      debugPrint(
-        "✅ Loaded business info: ${currentBusiness.value?.businessName}",
-      );
+      debugPrint("Loaded business info: ${currentBusiness.value?.businessName}",);
     } catch (e) {
-      debugPrint("❌ Error loading business info: $e");
+      debugPrint("Error loading business info: $e");
     }
   }
 
@@ -557,15 +555,15 @@ class BusinessAuthViewModel extends GetxController {
 
       Get.offAllNamed(AppRoutes.userTypeSelection);
 
-      Get.snackbar(
-        "common.success".tr,
-        "profile.logout_success".tr,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
+      // Get.snackbar(
+      //   "common.success".tr,
+      //   "profile.logout_success".tr,
+      //   snackPosition: SnackPosition.BOTTOM,
+      //   backgroundColor: Colors.green,
+      //   colorText: Colors.white,
+      // );
     } catch (e) {
-      debugPrint("❌ Sign Out Error: $e");
+      debugPrint("Sign Out Error: $e");
     }
   }
 

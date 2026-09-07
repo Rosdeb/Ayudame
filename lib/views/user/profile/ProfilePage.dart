@@ -17,6 +17,7 @@ import '../../../core/routes/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import '../../../services/firebasenotification/firebasenotification.dart';
+import '../../../services/storage_service.dart';
 import 'PrivacyPolicyScreen.dart';
 import 'TermsConditionScreen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -33,9 +34,12 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
-      appBar: CustomAppBar(title: AppTranslations.translateValue("Profile"),onBackTap: (){
-        Get.back();
-      },),
+      appBar: CustomAppBar(
+        title: AppTranslations.translateValue("Profile"),
+        onBackTap: () {
+          Get.back();
+        },
+      ),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
@@ -62,11 +66,28 @@ class ProfilePage extends StatelessWidget {
                         );
                       }
 
-                      return Column(
-                        children: [
-                          // ----------- Profile Image ----------
-                          Center(
-                            child: Container(
+                      return Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(
+                            color: Color(0xFFE3E6F0),
+                            width: 0.6,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.10),
+                              offset: const Offset(0, 2),
+                              blurRadius: 2,
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            // ----------- Profile Image ----------
+                            Container(
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
@@ -75,7 +96,7 @@ class ProfilePage extends StatelessWidget {
                                 ),
                               ),
                               child: CircleAvatar(
-                                radius: 55,
+                                radius: 38,
                                 backgroundColor: Colors.grey[200],
                                 child: ClipOval(
                                   child: user == null
@@ -87,8 +108,8 @@ class ProfilePage extends StatelessWidget {
                                         )
                                       : CachedNetworkImage(
                                           imageUrl: user.profilePicture ?? "",
-                                          width: 110,
-                                          height: 110,
+                                          width: 80,
+                                          height: 80,
                                           fit: BoxFit.cover,
                                           placeholder: (context, url) =>
                                               Shimmer.fromColors(
@@ -96,8 +117,8 @@ class ProfilePage extends StatelessWidget {
                                                 highlightColor:
                                                     Colors.grey[100]!,
                                                 child: Container(
-                                                  width: 110,
-                                                  height: 110,
+                                                  width: 80,
+                                                  height: 80,
                                                   decoration:
                                                       const BoxDecoration(
                                                         color: Colors.grey,
@@ -116,27 +137,33 @@ class ProfilePage extends StatelessWidget {
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 16),
 
-                          Text(
-                            user.fullName,
-                            style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
+                            const SizedBox(width: 16),
+
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  user.fullName,
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+
+                                const SizedBox(height: 4),
+
+                                Text(
+                                  user.email,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black87,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-
-                          const SizedBox(height: 4),
-
-                          Text(
-                            user.email,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.black54,
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       );
                     }),
 
@@ -644,21 +671,21 @@ class ProfilePage extends StatelessWidget {
                         try {
                           await TokenService().clearToken();
 
-                          await PrefsHelper.clear();
-                          print("Prefs cleared");
+                          await StorageService.clearAll();
+                          print("Storage cleared");
 
                           Navigator.of(context).pop();
 
                           Get.offAllNamed(AppRoutes.userTypeSelection);
 
-                          Get.snackbar(
-                            AppTranslations.translateValue('Success'),
-                            AppTranslations.translateValue(
-                              'Logged out successfully',
-                            ),
-                            backgroundColor: Colors.green,
-                            colorText: Colors.white,
-                          );
+                          // Get.snackbar(
+                          //   AppTranslations.translateValue('Success'),
+                          //   AppTranslations.translateValue(
+                          //     'Logged out successfully',
+                          //   ),
+                          //   backgroundColor: Colors.green,
+                          //   colorText: Colors.white,
+                          // );
                         } catch (e) {
                           print("Logout error: $e");
                           Get.snackbar(

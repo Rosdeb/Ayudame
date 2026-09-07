@@ -9,6 +9,7 @@ import 'package:middle_ware/views/user/profile/ProfilePage.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../utils/app_icons.dart';
 import 'package:middle_ware/core/localization/app_translations.dart';
+import 'package:middle_ware/controller/user/category_controller/category_conttroller.dart';
 
 class UserBottomNavScreen extends StatefulWidget {
   const UserBottomNavScreen({super.key});
@@ -19,6 +20,12 @@ class UserBottomNavScreen extends StatefulWidget {
 
 class _UserBottomNavScreenState extends State<UserBottomNavScreen> {
   int selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    Get.put(CategoryController());
+  }
 
   void navigationItemTap(int index) {
     setState(() {

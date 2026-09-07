@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import '../../../models/user/home/recent_providers_model.dart';
-import '../../../utils/token_service.dart';
 import 'package:middle_ware/services/api_service.dart';
 
 
@@ -12,8 +10,6 @@ class RecentProviderController extends GetxController {
   var isLoading = false.obs;
   var providerList = <ProviderModel>[].obs;
   var errorMessage = ''.obs;
-
-  final String recentUrl = "${ApiService.BASE_URL}/api/auth/recent-providers";
 
   @override
   void onInit() {
@@ -26,18 +22,10 @@ class RecentProviderController extends GetxController {
       isLoading(true);
       errorMessage('');
 
-      final token = await TokenService().getToken();
-      if (token == null || token.isEmpty) {
-        errorMessage.value = "No authentication token";
-        return;
-      }
-
-      final response = await http.get(
-        Uri.parse(recentUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
+      // Using the global ApiService which automatically handles tokens and headers!
+      final response = await ApiService.get(
+        endpoint: '/api/auth/recent-providers',
+        requireAuth: true, 
       );
 
       print("Recent Providers Status: ${response.statusCode}");

@@ -30,9 +30,10 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 bottomRight: Radius.circular(30),
               ),
             ),
-            padding: EdgeInsets.fromLTRB(20, 45, 20, 24),
+            padding: EdgeInsets.fromLTRB(20, 45, 20, 16),
             child: Column(
               children: [
+                SizedBox(height: 10),
                 Center(
                   child: Text(
                     AppTranslations.translateValue('Categories'),
@@ -43,7 +44,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 16),
+                SizedBox(height: 10),
 
                 Container(
                   decoration: BoxDecoration(
@@ -51,6 +52,9 @@ class _CategoriesPageState extends State<CategoriesPage> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: TextField(
+                    onChanged: (value){
+
+                    },
                     decoration: InputDecoration(
                       hintText: AppTranslations.translateValue(
                         'Search Categories...',
@@ -90,6 +94,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 }
 
                 return GridView.builder(
+                  padding: EdgeInsets.all(0),
                   itemCount: controller.categories.length,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
@@ -99,9 +104,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   ),
                   itemBuilder: (context, index) {
                     final category = controller.categories[index];
-                    print(
-                      "Building CategoryCard: ${category.name} (ID: ${category.id})",
-                    );
+                    print("Building CategoryCard: ${category.name} (ID: ${category.id})",);
 
                     return CategoryCard(
                       title: category.name,

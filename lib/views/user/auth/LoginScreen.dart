@@ -166,8 +166,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
       await StorageService.clearSavedCredentials('user');
     }
 
-    final String targetRoute =
-        _homeRouteForRole(normalizedRole) ?? AppRoutes.userBottomNavScreen;
+    final String targetRoute = _homeRouteForRole(normalizedRole) ?? AppRoutes.userBottomNavScreen;
     Get.offNamed(targetRoute);
   }
 
@@ -201,12 +200,12 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
           : <String, dynamic>{};
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Get.snackbar(
-          t('common.success'),
-          data["message"] ?? t('auth.login_success'),
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
+        // Get.snackbar(
+        //   t('common.success'),
+        //   data["message"] ?? t('auth.login_success'),
+        //   backgroundColor: Colors.green,
+        //   colorText: Colors.white,
+        // );
         await _handleLoginSuccess(data);
       } else {
         Get.snackbar(
@@ -281,12 +280,12 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
           : <String, dynamic>{};
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Get.snackbar(
-          t('common.success'),
-          data["message"]?.toString() ?? 'Social login successful',
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
+        // Get.snackbar(
+        //   t('common.success'),
+        //   data["message"]?.toString() ?? 'Social login successful',
+        //   backgroundColor: Colors.green,
+        //   colorText: Colors.white,
+        // );
         await _handleLoginSuccess(data);
       } else {
         Get.snackbar(

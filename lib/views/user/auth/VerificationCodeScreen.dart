@@ -93,9 +93,11 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
       Get.snackbar("Error", "Something went wrong: $e");
       return false;
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -106,7 +108,11 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
 
   @override
   void dispose() {
-    pinController.dispose();
+    try {
+      pinController.dispose();
+    } catch (e) {
+      debugPrint("pinController already disposed: $e");
+    }
     super.dispose();
   }
 

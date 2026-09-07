@@ -61,12 +61,12 @@ class _OTPVerificationForSignupState extends State<OTPVerificationForSignup> {
       final data = json.decode(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Get.snackbar(
-          "Success",
-          data["message"] ?? "OTP Verified successfully!",
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
+        // Get.snackbar(
+        //   "Success",
+        //   data["message"] ?? "OTP Verified successfully!",
+        //   backgroundColor: Colors.green,
+        //   colorText: Colors.white,
+        // );
         Get.toNamed(AppRoutes.userlogin);
 
         return true;

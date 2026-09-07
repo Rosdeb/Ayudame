@@ -2,7 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get/get.dart';
 import '../services/api_service.dart';
+import '../core/routes/app_routes.dart';
+import '../services/storage_service.dart';
 
 class TokenService {
   static final TokenService _instance = TokenService._internal();
@@ -59,6 +62,13 @@ class TokenService {
     }
 
     final String? refreshedToken = await _refreshAccessToken();
+    
+    // Check if token was cleared during refresh (e.g., due to 400/401)
+    final String? currentToken = _prefs?.getString(_accessTokenKey);
+    if (currentToken == null || currentToken.isEmpty) {
+      return null;
+    }
+    
     return refreshedToken ?? accessToken;
   }
 
@@ -108,6 +118,7 @@ class TokenService {
           .trim();
 
       if (refreshToken.isEmpty) {
+        await clearToken();
         completer.complete(null);
       } else {
         final response = await http.post(
@@ -169,5 +180,12 @@ class TokenService {
     await _ensurePrefs();
     await _prefs?.remove(_accessTokenKey);
     await _prefs?.remove(_refreshTokenKey);
+    
+    try {
+      await StorageService.clearAll();
+      Get.offAllNamed(AppRoutes.userTypeSelection);
+    } catch (e) {
+      print("Navigation error on clearToken: $e");
+    }
   }
 }

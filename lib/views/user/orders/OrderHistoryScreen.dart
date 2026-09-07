@@ -26,7 +26,9 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
       appBar: CustomAppBar(
-        onBackTap: (){},
+        onBackTap: (){
+          Navigator.pop(context);
+        },
         title: AppTranslations.translateValue("Order History",),
       ),
       body: Column(

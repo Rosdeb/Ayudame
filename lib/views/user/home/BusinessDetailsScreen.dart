@@ -325,17 +325,18 @@ class _BusinessDetailsScreenState extends State<BusinessDetailsScreen> {
     return Column(
       children: [
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          padding: EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(30),
-            border: Border.all(color: Colors.grey[200]!),
+            border: Border.all(color: Colors.grey[500]!),
           ),
           child: TextField(
             onChanged: (v) => controller.updateSearch(v),
             decoration: InputDecoration(
+              fillColor: AppColors.white,
               hintText: AppTranslations.translateValue("Search Services.."),
-              hintStyle: GoogleFonts.inter(fontSize: 14.sp, color: Colors.grey),
+              hintStyle: GoogleFonts.inter(fontSize: 14, color: Colors.grey),
               icon: const Icon(Icons.search, color: Colors.grey),
               border: InputBorder.none,
               focusedBorder: InputBorder.none,

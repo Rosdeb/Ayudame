@@ -9,6 +9,8 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
+import '../../../core/theme/app_colors.dart';
+
 String t(String value) => AppTranslations.translateValue(value);
 
 class UserETicketScreen extends StatefulWidget {
@@ -36,11 +38,11 @@ class _UserETicketScreenState extends State<UserETicketScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF08140F),
+      backgroundColor: AppColors.bgColor,
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF0D2018), Color(0xFF08140F), Color(0xFF050C09)],
+            colors: [ AppColors.bgColor, AppColors.bgColor, AppColors.bgColor],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -520,7 +522,7 @@ class _TicketAppBar extends StatelessWidget {
               child: Text(
                 title,
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: Colors.black,
                   fontSize: 17,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.4,
@@ -544,7 +546,7 @@ class _TicketAppBar extends StatelessWidget {
                 height: 18,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
               ),
             )
@@ -570,10 +572,10 @@ class _CircleBtn extends StatelessWidget {
         width: 38,
         height: 38,
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.12),
+          color: Colors.grey.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Icon(icon, color: Colors.white, size: 18),
+        child: Icon(icon, color: Colors.black, size: 18),
       ),
     );
   }
