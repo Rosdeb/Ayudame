@@ -13,6 +13,8 @@ import '../../../utils/constants.dart' hide AppColors;
 import '../../../widgets/custom_loading_button.dart';
 import 'package:middle_ware/core/localization/app_translations.dart';
 
+import '../../components/floatingbar.dart';
+
 class ProviderVerificationCodeScreen extends StatefulWidget {
   const ProviderVerificationCodeScreen({super.key});
 
@@ -81,34 +83,18 @@ class _ProviderVerificationCodeScreenState
             data['data']?['token'] ??
             data['token'];
         if (resetToken is! String || resetToken.isEmpty) {
-          Get.snackbar(
-            AppTranslations.translateValue("Error"),
-            AppTranslations.translateValue(
-              "Reset token missing from response.",
-            ),
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
+          FloatingErrorBar.show(
+            context,
+            message: "${AppTranslations.translateValue("Error")}\n"
+                "${AppTranslations.translateValue("Reset token missing from response.")}",
           );
           return;
         }
 
-        Get.snackbar(
-          "Success",
-          data["message"] ?? "OTP verified.",
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
-        Get.to(
-          () => const ProviderNewPasswordScreen(),
-          arguments: {"resetToken": resetToken},
-        );
+
+        Get.to(() => const ProviderNewPasswordScreen(), arguments: {"resetToken": resetToken},);
       } else {
-        Get.snackbar(
-          "Error",
-          data["message"] ?? "Verification failed",
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
+        FloatingErrorBar.show(context, message: data["message"] ?? "Verification failed",);
       }
     } catch (e) {
       Get.snackbar("Error", "Something went wrong: $e");

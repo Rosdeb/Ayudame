@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:middle_ware/views/components/floatingbar.dart';
+import 'package:middle_ware/views/components/successbar.dart';
 import 'package:middle_ware/widgets/custom_loading_button.dart';
 
 import '../../../core/routes/app_routes.dart';
@@ -85,23 +87,15 @@ class _ProviderNewPasswordScreenState extends State<ProviderNewPasswordScreen> {
       final data = json.decode(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Get.snackbar(
-          'Success',
-          data["message"] ?? "Password updated successfully!",
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
+
+        FloatingSuccessBar.show(context, message: "Password updated successfully!",);
         Get.offAllNamed(AppRoutes.providerLogin);
       } else {
-        Get.snackbar(
-          "Error",
-          data['message'] ?? "Reset failed",
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
+        FloatingErrorBar.show(context, message: "Error Reset failed",);
       }
     } catch (e) {
-      Get.snackbar("Error", "Something went wrong: $e");
+      FloatingErrorBar.show(context, message: "Error Something went wrong: $e");
+
     } finally {
       setState(() {
         isLoading = false;

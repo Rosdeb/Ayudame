@@ -11,6 +11,7 @@ import 'package:image_picker/image_picker.dart';
 
 import 'package:middle_ware/core/routes/app_routes.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
+import 'package:middle_ware/views/components/floatingbar.dart';
 import 'package:middle_ware/widgets/custom_loading_button.dart';
 import 'package:middle_ware/services/api_service.dart';
 import '../../../utils/constants.dart' hide AppColors;
@@ -88,23 +89,24 @@ class _SignUpScreenState extends State<SignUpProviderScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     if (_idCardFront == null || _idCardBack == null) {
-      Get.snackbar(
-        AppTranslations.translateValue("Missing ID"),
-        AppTranslations.translateValue(
+
+      FloatingErrorBar.show(context,
+        message: "${AppTranslations.translateValue("Missing ID")}\n"
+            "${AppTranslations.translateValue(
           "Please upload both front and back of your ID card.",
-        ),
-        backgroundColor: Colors.orange,
-        colorText: Colors.white,
+        )}",
       );
+
       return;
     }
 
     if (!await _hasInternetConnection()) {
-      Get.snackbar(
-        AppTranslations.translateValue("No Internet"),
-        AppTranslations.translateValue(
+      FloatingErrorBar.show(
+        context,
+        message: "${AppTranslations.translateValue("No Internet")}\n"
+            "${AppTranslations.translateValue(
           "Please check your internet connection.",
-        ),
+        )}",
       );
       return;
     }
@@ -112,13 +114,13 @@ class _SignUpScreenState extends State<SignUpProviderScreen> {
     final frontSubtype = _imageSubtypeForPath(_idCardFront!.path);
     final backSubtype = _imageSubtypeForPath(_idCardBack!.path);
     if (frontSubtype == null || backSubtype == null) {
-      Get.snackbar(
-        AppTranslations.translateValue("Invalid Format"),
-        AppTranslations.translateValue(
+      FloatingErrorBar.show(
+        context,
+        message:
+        "${AppTranslations.translateValue("Invalid Format")}\n"
+            "${AppTranslations.translateValue(
           "Only JPG, JPEG, PNG, or WEBP files are allowed.",
-        ),
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+        )}",
       );
       return;
     }
@@ -134,8 +136,7 @@ class _SignUpScreenState extends State<SignUpProviderScreen> {
       request.fields['email'] = _emailController.text.trim();
       request.fields['phoneNumber'] = _phoneController.text.trim();
       request.fields['password'] = _passwordController.text.trim();
-      request.fields['confirmPassword'] = _confirmPasswordController.text
-          .trim();
+      request.fields['confirmPassword'] = _confirmPasswordController.text.trim();
 
       final occupation = _occupationController.text.trim();
       if (occupation.isNotEmpty) {
@@ -170,11 +171,9 @@ class _SignUpScreenState extends State<SignUpProviderScreen> {
 
       if (streamedResponse.statusCode == 200 ||
           streamedResponse.statusCode == 201) {
-        Get.snackbar(
-          "Success",
-          data["message"] ?? "OTP has been sent to your email.",
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
+        FloatingErrorBar.show(context,
+          message: "${AppTranslations.translateValue("Success")}\n"
+              "${data["message"] ?? AppTranslations.translateValue("OTP has been sent to your email.")}",
         );
 
         Get.toNamed(
@@ -182,19 +181,17 @@ class _SignUpScreenState extends State<SignUpProviderScreen> {
           arguments: {"email": _emailController.text.trim()},
         );
       } else {
-        Get.snackbar(
-          "Error",
-          data["message"] ?? "Signup failed",
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
+        FloatingErrorBar.show(
+          context,
+          message: "${AppTranslations.translateValue("Error")}\n"
+              "${data["message"] ?? AppTranslations.translateValue("Signup failed")}",
         );
       }
     } catch (e) {
-      Get.snackbar(
-        "Error",
-        "Something went wrong: $e",
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
+      FloatingErrorBar.show(
+        context,
+        message: "${AppTranslations.translateValue("Error")}\n"
+            "${AppTranslations.translateValue("Something went wrong")}: $e",
       );
     } finally {
       setState(() {

@@ -645,7 +645,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                     onPressed:
                         (bookingId == null || bookingId.isEmpty || isAccepting)
                         ? null
-                        : () => controller.acceptBooking(bookingId),
+                        : () => controller.acceptBooking(context,bookingId),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF2C5F4F),
                       shape: RoundedRectangleBorder(

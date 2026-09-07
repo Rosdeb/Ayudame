@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:middle_ware/views/components/successbar.dart';
 import '../../../core/theme/app_colors.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -64,12 +65,7 @@ class _ProviderOtpVerificationScreen
       final data = json.decode(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Get.snackbar(
-          "Success",
-          data["message"] ?? "OTP Verified successfully!",
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
+        FloatingSuccessBar.show(context, message: "OTP Verified Successfully");
         final accessToken = data['data']?['accessToken'];
         final refreshToken = data['data']?['refreshToken'];
         if (accessToken is String && accessToken.isNotEmpty) {

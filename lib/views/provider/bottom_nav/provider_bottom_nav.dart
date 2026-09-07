@@ -105,13 +105,13 @@ class _ProviderBottomNavScreenState extends State<ProviderBottomNavScreen> {
             selectedLabelStyle: TextStyle(
               fontFamily: 'SegeoUi_bold',
               fontWeight: FontWeight.w700,
-              fontSize: 12.sp,
+              fontSize: 11,
               color: AppColors.mainAppColor,
             ),
             unselectedLabelStyle: TextStyle(
               fontFamily: 'SegeoUi_bold',
               fontWeight: FontWeight.w600,
-              fontSize: 12.sp,
+              fontSize: 11,
               color: AppColors.grey,
             ),
             showSelectedLabels: true,

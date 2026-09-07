@@ -1,8 +1,9 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:middle_ware/utils/constants.dart';
-import 'package:middle_ware/utils/token_service.dart';
+import 'package:middle_ware/views/components/floatingbar.dart';
+import 'package:middle_ware/views/components/successbar.dart';
 
 import '../../models/provider/provider_booking_model.dart';
 import '../../models/provider/provider_appointment_model.dart';
@@ -34,22 +35,12 @@ class HomeProviderController extends GetxController {
 
   Future<void> fetchRecentBookings() async {
     try {
-      String? token = await TokenService().getToken();
-
       final responses = await Future.wait([
-        http.get(
-          Uri.parse('${ApiService.BASE_URL}/api/providers/bookings'),
-          headers: {
-            'Authorization': 'Bearer $token',
-            'Content-Type': 'application/json',
-          },
+        ApiService.get(
+          endpoint: '/api/providers/bookings',
         ),
-        http.get(
-          Uri.parse('${ApiService.BASE_URL}/api/providers/appointments'),
-          headers: {
-            'Authorization': 'Bearer $token',
-            'Content-Type': 'application/json',
-          },
+        ApiService.get(
+          endpoint: '/api/providers/appointments',
         ),
       ]);
 
@@ -94,14 +85,9 @@ class HomeProviderController extends GetxController {
   Future<void> fetchBookingStats() async {
     try {
       isLoading(true);
-      String? token = await TokenService().getToken();
 
-      var response = await http.get(
-        Uri.parse('${ApiService.BASE_URL}/api/providers/bookings/stats'),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
+      var response = await ApiService.get(
+        endpoint: '/api/providers/bookings/stats',
       );
 
       if (response.statusCode == 200) {
@@ -140,54 +126,33 @@ class HomeProviderController extends GetxController {
     }
   }
 
-  Future<void> acceptBooking(String bookingId, {String? providerNotes}) async {
+  Future<void> acceptBooking(BuildContext context ,String bookingId, {String? providerNotes}) async {
     if (bookingId.isEmpty || acceptingBookingIds.contains(bookingId)) {
       return;
     }
 
     try {
       acceptingBookingIds.add(bookingId);
-      final String? token = await TokenService().getToken();
 
-      if (token == null || token.isEmpty) {
-        Get.snackbar(
-          'Error',
-          'Authorization token not found. Please log in again.',
-        );
-        return;
-      }
-
-      final response = await http.patch(
-        Uri.parse(
-          '${ApiService.BASE_URL}/api/providers/bookings/$bookingId/accept',
-        ),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
+      final response = await ApiService.patch(
+        endpoint: '/api/providers/bookings/$bookingId/accept',
+        body: {
           if (providerNotes != null && providerNotes.trim().isNotEmpty)
             'providerNotes': providerNotes.trim(),
-        }),
+        },
       );
 
       final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
       if (response.statusCode == 200 && jsonResponse['success'] == true) {
-        Get.snackbar(
-          'Success',
-          jsonResponse['message']?.toString() ??
-              'Booking accepted successfully',
-        );
+        FloatingSuccessBar.show(context, message: "Booking accepted successfully");
+
         await fetchRecentBookings();
         await fetchBookingStats();
       } else {
-        Get.snackbar(
-          'Error',
-          jsonResponse['message']?.toString() ?? 'Failed to accept booking',
-        );
+        FloatingErrorBar.show(context, message: jsonResponse['message']?.toString() ?? 'Failed to accept booking');
       }
     } catch (e) {
-      Get.snackbar('Error', 'Failed to accept booking. Please try again.');
+      FloatingErrorBar.show(context, message: 'Failed to accept booking. Please try again.');
     } finally {
       acceptingBookingIds.remove(bookingId);
     }

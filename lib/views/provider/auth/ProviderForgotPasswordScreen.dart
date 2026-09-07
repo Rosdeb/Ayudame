@@ -9,6 +9,8 @@ import 'package:middle_ware/services/api_service.dart';
 import '../../../widgets/custom_loading_button.dart';
 import 'package:middle_ware/core/localization/app_translations.dart';
 
+import '../../components/floatingbar.dart';
+
 class ProviderForgotPasswordScreen extends StatefulWidget {
   const ProviderForgotPasswordScreen({super.key});
 
@@ -53,22 +55,15 @@ class _ProviderForgotPasswordScreenState
       final data = json.decode(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Get.snackbar(
-          "Success",
-          data["message"] ?? "OTP has been sent to your email.",
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
         Get.toNamed(
           AppRoutes.providerOtp,
           arguments: {"email": _emailController.text.trim()},
         );
       } else {
-        Get.snackbar(
-          "Error",
-          data["message"] ?? "Request failed",
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
+
+        FloatingErrorBar.show(
+          context,
+          message: "${AppTranslations.translateValue("Error")}\n" "${data["message"] ?? AppTranslations.translateValue("Request failed")}",
         );
       }
     } catch (e) {

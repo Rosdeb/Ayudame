@@ -592,15 +592,6 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
                           // Navigate to common user login screen and clear all previous routes
                           Get.offAllNamed(AppRoutes.userTypeSelection);
 
-                          // Show success message
-                          Get.snackbar(
-                            AppTranslations.translateValue('Success'),
-                            AppTranslations.translateValue(
-                              'Logged out successfully',
-                            ),
-                            backgroundColor: Colors.green,
-                            colorText: Colors.white,
-                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.orange,
