@@ -21,6 +21,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../models/user/home/home_search_model.dart';
 import 'UserNotificationPage.dart';
 import 'package:middle_ware/core/localization/app_translations.dart';
+import '../../../controller/user/bottom_nav_controller.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -86,7 +87,11 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          Get.toNamed(AppRoutes.userProfile);
+                          try {
+                            Get.find<UserBottomNavController>().changeTabIndex(3);
+                          } catch (e) {
+                            Get.toNamed(AppRoutes.userProfile);
+                          }
                         },
                         child: Row(
                           children: [
@@ -101,15 +106,12 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                 ),
                                 child: CircleAvatar(
-                                  radius: 30.r,
+                                  radius: 30,
                                   backgroundColor: Colors.grey[200],
-                                  backgroundImage:
-                                      (user?.profilePicture != null &&
-                                          user!.profilePicture!.isNotEmpty)
+                                  backgroundImage: (user?.profilePicture != null && user!.profilePicture!.isNotEmpty)
                                       ? NetworkImage(user.profilePicture!)
                                       : null,
-                                  child:
-                                      (user?.profilePicture == null ||
+                                  child: (user?.profilePicture == null ||
                                           user!.profilePicture!.isEmpty)
                                       ? Icon(
                                           Icons.person,

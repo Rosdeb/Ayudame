@@ -73,50 +73,53 @@ class _ProviderBottomNavScreenState extends State<ProviderBottomNavScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _pages[selectedIndex],
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Color(0xFFE7F4F6),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.r),
-            topRight: Radius.circular(20.r),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        if (selectedIndex != 0) {
+          setState(() {
+            selectedIndex = 0;
+          });
+        }
+      },
+      child: Scaffold(
+        body: _pages[selectedIndex],
+        bottomNavigationBar: Container(
+          decoration: BoxDecoration(
+            color: Color(0xFFE7F4F6),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.r),
+              topRight: Radius.circular(20.r),
+            ),
+            border: const Border(
+              top: BorderSide(color: Color(0xFFE3E6F0), width: 1),
+            ),
           ),
-          // boxShadow: [
-          //   BoxShadow(
-          //     color: const Color(0xFF000000).withOpacity(0.08),
-          //     offset: const Offset(4, 0),
-          //     blurRadius: 4,
-          //     spreadRadius: 0,
-          //   ),
-          // ],
-          border: const Border(
-            top: BorderSide(color: Color(0xFFE3E6F0), width: 1),
+          height: MediaQuery.of(context).size.height * 0.12,
+          child: BottomNavigationBar(
+            elevation: 0,
+            type: BottomNavigationBarType.fixed,
+            currentIndex: selectedIndex,
+            selectedItemColor: AppColors.mainAppColor,
+            selectedLabelStyle: TextStyle(
+              fontFamily: 'SegeoUi_bold',
+              fontWeight: FontWeight.w700,
+              fontSize: 12.sp,
+              color: AppColors.mainAppColor,
+            ),
+            unselectedLabelStyle: TextStyle(
+              fontFamily: 'SegeoUi_bold',
+              fontWeight: FontWeight.w600,
+              fontSize: 12.sp,
+              color: AppColors.grey,
+            ),
+            showSelectedLabels: true,
+            unselectedItemColor: AppColors.grey,
+            backgroundColor: Colors.transparent,
+            onTap: navigationItemTap,
+            items: _navItems,
           ),
-        ),
-        height: MediaQuery.of(context).size.height * 0.12,
-        child: BottomNavigationBar(
-          elevation: 0,
-          type: BottomNavigationBarType.fixed,
-          currentIndex: selectedIndex,
-          selectedItemColor: AppColors.mainAppColor,
-          selectedLabelStyle: TextStyle(
-            fontFamily: 'SegeoUi_bold',
-            fontWeight: FontWeight.w700,
-            fontSize: 12.sp,
-            color: AppColors.mainAppColor,
-          ),
-          unselectedLabelStyle: TextStyle(
-            fontFamily: 'SegeoUi_bold',
-            fontWeight: FontWeight.w600,
-            fontSize: 12.sp,
-            color: AppColors.grey,
-          ),
-          showSelectedLabels: true,
-          unselectedItemColor: AppColors.grey,
-          backgroundColor: Colors.transparent,
-          onTap: navigationItemTap,
-          items: _navItems,
         ),
       ),
     );

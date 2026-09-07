@@ -16,10 +16,7 @@ class OrderHistoryScreen extends StatefulWidget {
 }
 
 class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
-  final OrderController _controller = Get.put(
-    OrderController(),
-    permanent: false,
-  );
+  final OrderController _controller = Get.put(OrderController(), permanent: false,);
 
   @override
   Widget build(BuildContext context) {

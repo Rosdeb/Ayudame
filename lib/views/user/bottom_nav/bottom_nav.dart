@@ -10,6 +10,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../utils/app_icons.dart';
 import 'package:middle_ware/core/localization/app_translations.dart';
 import 'package:middle_ware/controller/user/category_controller/category_conttroller.dart';
+import '../../../controller/user/bottom_nav_controller.dart';
 
 class UserBottomNavScreen extends StatefulWidget {
   const UserBottomNavScreen({super.key});
@@ -19,18 +20,12 @@ class UserBottomNavScreen extends StatefulWidget {
 }
 
 class _UserBottomNavScreenState extends State<UserBottomNavScreen> {
-  int selectedIndex = 0;
+  final UserBottomNavController _navController = Get.put(UserBottomNavController());
 
   @override
   void initState() {
     super.initState();
     Get.put(CategoryController());
-  }
-
-  void navigationItemTap(int index) {
-    setState(() {
-      selectedIndex = index;
-    });
   }
 
   final List<Widget> _pages = [
@@ -70,52 +65,53 @@ class _UserBottomNavScreenState extends State<UserBottomNavScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _pages[selectedIndex],
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Color(0xFFE7F4F6),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.r),
-            topRight: Radius.circular(20.r),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        if (_navController.selectedIndex.value != 0) {
+          _navController.changeTabIndex(0);
+        }
+      },
+      child: Obx(() => Scaffold(
+        body: _pages[_navController.selectedIndex.value],
+        bottomNavigationBar: Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFFE7F4F6),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.r),
+              topRight: Radius.circular(20.r),
+            ),
+            border: const Border(
+              top: BorderSide(color: Color(0xFFE3E6F0), width: 1),
+            ),
           ),
-          // boxShadow: [
-          //   BoxShadow(
-          //     color: const Color(0xFF000000).withOpacity(0.08),
-          //     offset: const Offset(4, 0),
-          //     blurRadius: 4,
-          //     spreadRadius: 0,
-          //   ),
-          // ],
-          border: const Border(
-            top: BorderSide(color: Color(0xFFE3E6F0), width: 1),
+          height: MediaQuery.of(context).size.height * 0.12,
+          child: BottomNavigationBar(
+            elevation: 0,
+            type: BottomNavigationBarType.fixed,
+            currentIndex: _navController.selectedIndex.value,
+            selectedItemColor: AppColors.mainAppColor,
+            selectedLabelStyle: TextStyle(
+              fontFamily: 'SegeoUi_bold',
+              fontWeight: FontWeight.w700,
+              fontSize: 12.sp,
+              color: AppColors.mainAppColor,
+            ),
+            unselectedLabelStyle: TextStyle(
+              fontFamily: 'SegeoUi_bold',
+              fontWeight: FontWeight.w600,
+              fontSize: 12.sp,
+              color: AppColors.grey,
+            ),
+            showSelectedLabels: true,
+            unselectedItemColor: AppColors.grey,
+            backgroundColor: Colors.transparent,
+            onTap: _navController.changeTabIndex,
+            items: _navItems,
           ),
         ),
-        height: MediaQuery.of(context).size.height * 0.12,
-        child: BottomNavigationBar(
-          elevation: 0,
-          type: BottomNavigationBarType.fixed,
-          currentIndex: selectedIndex,
-          selectedItemColor: AppColors.mainAppColor,
-          selectedLabelStyle: TextStyle(
-            fontFamily: 'SegeoUi_bold',
-            fontWeight: FontWeight.w700,
-            fontSize: 12.sp,
-            color: AppColors.mainAppColor,
-          ),
-          unselectedLabelStyle: TextStyle(
-            fontFamily: 'SegeoUi_bold',
-            fontWeight: FontWeight.w600,
-            fontSize: 12.sp,
-            color: AppColors.grey,
-          ),
-          showSelectedLabels: true,
-          unselectedItemColor: AppColors.grey,
-          backgroundColor: Colors.transparent,
-          onTap: navigationItemTap,
-          items: _navItems,
-        ),
-      ),
+      )),
     );
   }
 
@@ -131,7 +127,9 @@ class _UserBottomNavScreenState extends State<UserBottomNavScreen> {
       icon: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SvgPicture.asset(selectedIndex == index ? selected : unselected),
+          Obx(() => SvgPicture.asset(
+            _navController.selectedIndex.value == index ? selected : unselected
+          )),
           SizedBox(height: 5.h),
         ],
       ),

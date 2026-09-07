@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import '../../../models/user/orders/order_model.dart';
-import '../../../utils/token_service.dart';
 import 'package:middle_ware/services/api_service.dart';
 
 class OrderController extends GetxController {
@@ -26,21 +24,13 @@ class OrderController extends GetxController {
       isLoading(true);
       orderList.clear();
 
-      final token = await TokenService().getToken();
-      if (token == null) {
-        isLoading(false);
-        return;
-      }
-
       if (currentTab.value == 'Appointment') {
         final providerAppointments = await _fetchOrderFamily(
-          token: token,
           endpoint: '/api/appointments/my-appointments?page=1&limit=50',
           source: OrderSource.provider,
         );
 
         final businessOwnerAppointments = await _fetchOrderFamily(
-          token: token,
           endpoint:
               '/api/business-owner-appointments/my-appointments?page=1&limit=50',
           source: OrderSource.businessOwner,
@@ -51,13 +41,11 @@ class OrderController extends GetxController {
         orderList.assignAll(merged);
       } else {
         final providerBookings = await _fetchOrderFamily(
-          token: token,
           endpoint: '/api/bookings/my-bookings?page=1&limit=100',
           source: OrderSource.provider,
         );
 
         final businessOwnerBookings = await _fetchOrderFamily(
-          token: token,
           endpoint: '/api/business-owner-bookings/my-bookings?page=1&limit=100',
           source: OrderSource.businessOwner,
         );
@@ -78,18 +66,13 @@ class OrderController extends GetxController {
   }
 
   Future<List<OrderModel>> _fetchOrderFamily({
-    required String token,
     required String endpoint,
     required String source,
   }) async {
     try {
-      final uri = Uri.parse("${ApiService.BASE_URL}$endpoint");
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
+      final response = await ApiService.get(
+        endpoint: endpoint,
+        requireAuth: true,
       );
 
       print("Orders API [$source][$endpoint]: ${response.statusCode}");
@@ -105,13 +88,11 @@ class OrderController extends GetxController {
 
       return rawData
           .whereType<Map>()
-          .map(
-            (orderJson) => OrderModel.fromJson({
+          .map((orderJson) => OrderModel.fromJson({
               ...Map<String, dynamic>.from(orderJson),
               'source': source,
             }),
-          )
-          .toList();
+          ).toList();
     } catch (e) {
       print("Error fetching order family [$source][$endpoint]: $e");
       return <OrderModel>[];
@@ -174,8 +155,7 @@ class OrderController extends GetxController {
   }
 
   String _normalizeStatus(String status) {
-    return status
-        .toLowerCase()
+    return status.toLowerCase()
         .replaceAll('-', '_')
         .replaceAll(' ', '_')
         .trim();
