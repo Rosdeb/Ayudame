@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart' show ImageSource;
 import 'package:middle_ware/models/user/profile/profile_model.dart';
 import 'package:middle_ware/views/components/custom_app_bar.dart';
+import 'package:middle_ware/views/components/floatingbar.dart';
 import 'package:middle_ware/views/user/profile/ProfilePage.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../controller/user/profile/edit_profile_controller.dart';
@@ -99,25 +100,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       );
 
       if (response["status"] == 200) {
-        // Update ProfileController instantly
         final p = Get.find<ProfileController>();
         p.fetchProfile();
-
-        Get.snackbar(
-          "Success",
-          response["body"]["message"] ?? "Updated successfully!",
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
-
         Get.off(() => ProfilePage());
       } else {
-        Get.snackbar(
-          "Error",
-          response["body"]["message"] ?? "Update failed",
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
+        FloatingErrorBar.show(context, message: "Error ${response["body"]?["message"] ?? "Update failed"}",);
+
       }
     } catch (e) {
       Get.snackbar("Error", "Something went wrong: $e");

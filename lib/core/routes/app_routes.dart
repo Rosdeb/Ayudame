@@ -55,6 +55,7 @@ import '../../views/user/auth/LoginScreen.dart';
 import '../../views/user/auth/user_new_password_screen.dart';
 import '../../views/user/auth/SignUpScreen.dart';
 import '../../views/user/auth/VerificationCodeScreen.dart';
+import '../middlewares/auth_middleware.dart';
 import '../../views/user/home/CategoriesPage.dart';
 import '../../views/user/home/ChatScreen.dart';
 import '../../views/user/home/HomeScreen.dart';
@@ -197,11 +198,11 @@ class AppRoutes {
     GetPage(name: userforgotPassword, page: () => const ForgotPasswordScreen()),
     GetPage(name: userotp, page: () => const VerificationCodeScreen()),
     GetPage(name: userNewPasswordScreen, page: () => UserNewPasswordScreen()),
-    GetPage(name: userHome, page: () => const HomePage()),
-    GetPage(name: userBottomNavScreen, page: () => UserBottomNavScreen()),
+    GetPage(name: userHome, page: () => const HomePage(), middlewares: [AuthMiddleware()]),
+    GetPage(name: userBottomNavScreen, page: () => UserBottomNavScreen(), middlewares: [AuthMiddleware()]),
 
-    GetPage(name: userProfile, page: () => ProfilePage()),
-    GetPage(name: userEditProfile, page: () => const EditProfileScreen()),
+    GetPage(name: userProfile, page: () => ProfilePage(), middlewares: [AuthMiddleware()]),
+    GetPage(name: userEditProfile, page: () => const EditProfileScreen(), middlewares: [AuthMiddleware()]),
     GetPage(name: userCategories, page: () => const CategoriesPage()),
 
     GetPage(name: userNotification, page: () => const userNotificationPage()),
@@ -263,6 +264,7 @@ class AppRoutes {
     GetPage(
       name: providerBottomNavScreen,
       page: () => ProviderBottomNavScreen(),
+      middlewares: [AuthMiddleware()],
     ),
     GetPage(
       name: providerBankAdd,
@@ -286,7 +288,7 @@ class AppRoutes {
     ),
 
     // Business
-    GetPage(name: businessHome, page: () => const BottomNavScreen()),
+    GetPage(name: businessHome, page: () => const BottomNavScreen(), middlewares: [AuthMiddleware()]),
     GetPage(name: businessLogin, page: () => const BusinessLoginScreen()),
     GetPage(name: businessRegister, page: () => const BusinessSignUpScreen()),
     GetPage(name: businessOtp, page: () => const BusinessSignUpVerification()),
@@ -321,7 +323,7 @@ class AppRoutes {
       name: eventResetPassword,
       page: () => const EventResetPasswordScreen(),
     ),
-    GetPage(name: eventHome, page: () => const BottomNavEScreen()),
+    GetPage(name: eventHome, page: () => const BottomNavEScreen(), middlewares: [AuthMiddleware()]),
     GetPage(name: eventCreate, page: () => const CreateEventPage()),
     GetPage(
       name: eventEdit,

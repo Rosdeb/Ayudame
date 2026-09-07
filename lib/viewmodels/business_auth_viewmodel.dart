@@ -607,13 +607,13 @@ class BusinessAuthViewModel extends GetxController {
         }
       }
 
-      Get.snackbar(
-        "common.success".tr,
-        response['message'] ?? "Profile updated successfully",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
+      // Get.snackbar(
+      //   "common.success".tr,
+      //   response['message'] ?? "Profile updated successfully",
+      //   snackPosition: SnackPosition.BOTTOM,
+      //   backgroundColor: Colors.green,
+      //   colorText: Colors.white,
+      // );
 
       Get.back(); // Go back from edit screen
     } catch (e) {

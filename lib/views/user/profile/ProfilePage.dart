@@ -11,6 +11,7 @@ import 'package:middle_ware/views/user/profile/NotificationPage.dart';
 import 'package:middle_ware/views/user/profile/WishlistScreen.dart';
 import 'package:middle_ware/views/user/profile/my_events.dart';
 import 'package:middle_ware/views/user/profile/user_bank_information.dart';
+import 'package:middle_ware/views/user/profile/widgets/profil_shimmer.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../controller/user/profile/profile_controller.dart';
 import '../../../core/routes/app_routes.dart';
@@ -52,7 +53,7 @@ class ProfilePage extends StatelessWidget {
 
                     Obx(() {
                       if (profileController.isLoading.value) {
-                        return const CircularProgressIndicator();
+                        return ProfileShimmer();
                       }
 
                       if (profileController.errorMessage.isNotEmpty) {
@@ -167,9 +168,7 @@ class ProfilePage extends StatelessWidget {
                       );
                     }),
 
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.030,
-                    ),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.030,),
 
                     /// Account Information Details
                     Container(

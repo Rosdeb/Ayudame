@@ -14,13 +14,18 @@ class CategoryController extends GetxController {
     fetchCategories();
   }
 
-  Future<void> fetchCategories() async {
+  Future<void> fetchCategories({String? query}) async {
     try {
       isLoading(true);
       errorMessage('');
 
+      String endpoint = '/api/user/categories';
+      if (query != null && query.trim().isNotEmpty) {
+        endpoint += '?q=${Uri.encodeComponent(query.trim())}';
+      }
+
       final response = await ApiService.get(
-        endpoint: '/api/user/categories',
+        endpoint: endpoint,
         requireAuth: true,
       );
 
@@ -44,5 +49,9 @@ class CategoryController extends GetxController {
     } finally {
       isLoading(false);
     }
+  }
+
+  Future<void> searchCategories(String query) async {
+    await fetchCategories(query: query);
   }
 }

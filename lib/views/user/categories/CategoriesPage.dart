@@ -33,7 +33,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
             padding: EdgeInsets.fromLTRB(20, 45, 20, 16),
             child: Column(
               children: [
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Center(
                   child: Text(
                     AppTranslations.translateValue('Categories'),
@@ -44,7 +44,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
 
                 Container(
                   decoration: BoxDecoration(
@@ -53,7 +53,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   ),
                   child: TextField(
                     onChanged: (value){
-
+                      controller.fetchCategories(query: value);
                     },
                     decoration: InputDecoration(
                       hintText: AppTranslations.translateValue(
@@ -113,10 +113,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                           : "https://via.placeholder.com/150",
                       onTap: () {
                         print("Tapped Category: ${category.id}");
-                        Get.to(
-                          () => const CategoryBusinessesScreen(),
-                          arguments: category,
-                        );
+                        Get.to(() => const CategoryBusinessesScreen(), arguments: category,);
                       },
                     );
                   },

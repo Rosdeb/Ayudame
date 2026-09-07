@@ -22,6 +22,12 @@ class TokenService {
     _prefs = await SharedPreferences.getInstance();
   }
 
+  /// Synchronous check if token exists (used by GetMiddleware)
+  bool hasValidSessionSync() {
+    final token = _prefs?.getString(_accessTokenKey);
+    return token != null && token.isNotEmpty;
+  }
+
   Future<void> _ensurePrefs() async {
     _prefs ??= await SharedPreferences.getInstance();
   }
