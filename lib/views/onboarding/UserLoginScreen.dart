@@ -34,8 +34,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
 
   final _formKey = GlobalKey<FormState>();
   final loginApiUrl = "${ApiService.BASE_URL}/api/auth/login";
-  final socialLoginApiUrl =
-      "${ApiService.BASE_URL}/api/auth/social/direct-login";
+  final socialLoginApiUrl = "${ApiService.BASE_URL}/api/auth/social/direct-login";
 
   String t(String key) => AppTranslations.translateValue(key);
   String _normalizeRole(String? role) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/views/components/custom_app_bar.dart';
 import 'package:get/get.dart';
 import '../../../controller/user/orders/order_controller.dart';
@@ -23,9 +24,10 @@ class _OrderHistoryScreenState extends State<OrderHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: AppColors.bgColor,
       appBar: CustomAppBar(
-        title: AppTranslations.translateValue("Order History"),
+        onBackTap: (){},
+        title: AppTranslations.translateValue("Order History",),
       ),
       body: Column(
         children: [

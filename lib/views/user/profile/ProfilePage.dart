@@ -32,8 +32,10 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
-      appBar: CustomAppBar(title: AppTranslations.translateValue("Profile")),
+      backgroundColor: AppColors.bgColor,
+      appBar: CustomAppBar(title: AppTranslations.translateValue("Profile"),onBackTap: (){
+        Get.back();
+      },),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
@@ -79,9 +81,9 @@ class ProfilePage extends StatelessWidget {
                                   child: user == null
                                       ? Image.asset(
                                           "assets/images/emptyUser.png",
-                                          width: 110,
-                                          height: 110,
-                                          fit: BoxFit.cover,
+                                          width: 50,
+                                          height: 60,
+                                          fit: BoxFit.contain,
                                         )
                                       : CachedNetworkImage(
                                           imageUrl: user.profilePicture ?? "",
@@ -106,9 +108,9 @@ class ProfilePage extends StatelessWidget {
                                           errorWidget: (context, url, error) =>
                                               Image.asset(
                                                 "assets/images/emptyUser.png",
-                                                width: 110,
-                                                height: 110,
-                                                fit: BoxFit.cover,
+                                                width: 50,
+                                                height: 60,
+                                                fit: BoxFit.contain,
                                               ),
                                         ),
                                 ),
