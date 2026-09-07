@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:middle_ware/views/components/floatingbar.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../../controller/provider/profile/edit_profile_controller.dart';
@@ -102,25 +103,12 @@ class _ProviderEditProfileScreenState extends State<ProviderEditProfileScreen> {
         // Update ProviderProfileController instantly
         final p = Get.find<ProviderProfileController>();
         p.fetchProviderProfile();
-
-        Get.snackbar(
-          "Success",
-          response["body"]["message"] ?? "Updated successfully!",
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
-
         Get.off(() => ProviderProfilePage());
       } else {
-        Get.snackbar(
-          "Error",
-          response["body"]["message"] ?? "Update failed",
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
+        FloatingErrorBar.show(context, message:  response["body"]["message"] ?? "Update failed",);
       }
     } catch (e) {
-      Get.snackbar("Error", "Something went wrong: $e");
+      FloatingErrorBar.show(context, message:  "Error Something went wrong: $e");
     } finally {
       setState(() => isLoading = false);
     }

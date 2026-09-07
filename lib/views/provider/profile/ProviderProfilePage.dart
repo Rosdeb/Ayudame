@@ -54,14 +54,19 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
 
                   Obx(() {
                     if (controller.isLoading.value) {
-                      return const Center(child: CircularProgressIndicator());
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
                     }
 
                     if (controller.errorMessage.isNotEmpty) {
-                      return Center(child: Text(controller.errorMessage.value));
+                      return Center(
+                        child: Text(controller.errorMessage.value),
+                      );
                     }
 
                     final profile = controller.providerProfile.value;
+
                     if (profile == null) {
                       return Center(
                         child: Text(
@@ -71,61 +76,102 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
                         ),
                       );
                     }
-                    return Column(
-                      children: [
-                        Container(
-                          width: 100,
-                          height: 100,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 3),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 10,
-                                spreadRadius: 2,
+
+                    return Container(
+                      padding: const EdgeInsets.all(16),
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.09),
+                            offset: Offset(0, 2),
+                            blurRadius: 1,
+                            spreadRadius: 0
+                          )
+                        ]
+                      ),
+                      child: Row(
+                          children: [
+                            // Profile Image
+                            Container(
+                              width: 70,
+                              height: 70,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 2,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 8,
+                                    spreadRadius: 1,
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                          child: CircleAvatar(
-                            radius: 50,
-                            backgroundImage:
+                              child: CircleAvatar(
+                                radius: 35,
+                                backgroundImage:
                                 profile.userId.profilePicture != null &&
                                     profile.userId.profilePicture!.isNotEmpty
-                                ? NetworkImage(profile.userId.profilePicture!)
-                                : const AssetImage(
-                                        "assets/images/emptyUser.png",
-                                      )
-                                      as ImageProvider,
-                          ),
+                                    ? NetworkImage(
+                                  profile.userId.profilePicture!,
+                                )
+                                    : const AssetImage(
+                                  "assets/images/emptyUser.png",
+                                ) as ImageProvider,
+                              ),
+                            ),
+
+                            const SizedBox(width: 16),
+
+                            // User Information
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    profile.userId.fullName,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+
+                                  const SizedBox(height: 6),
+
+                                  Text(
+                                    profile.userId.email,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.black54,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: "Inter",
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            // Arrow / Action
+                            const Icon(
+                              Icons.chevron_right_rounded,
+                              color: Colors.grey,
+                            ),
+                          ],
                         ),
-
-                        const SizedBox(height: 16),
-
-                        Text(
-                          profile.userId.fullName,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
-                          ),
-                        ),
-
-                        const SizedBox(height: 4),
-
-                        Text(
-                          profile.userId.email,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.black54,
-                            fontWeight: FontWeight.w500,
-                            fontFamily: "Inter",
-                          ),
-                        ),
-                      ],
                     );
                   }),
 
+                  const SizedBox(height: 10,),
                   Obx(
                     () => Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -156,12 +202,10 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
                                       ),
                                       const SizedBox(width: 6),
                                       Text(
-                                        AppTranslations.translateValue(
-                                          'My Order',
-                                        ),
+                                        AppTranslations.translateValue('My Order',),
                                         style: TextStyle(
                                           fontSize: 14,
-                                          color: Colors.grey.shade700,
+                                          color: Colors.black87,
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
@@ -177,22 +221,20 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
                                         Column(
                                           children: [
                                             Text(
-                                              AppTranslations.translateValue(
-                                                'This Month',
-                                              ),
+                                              AppTranslations.translateValue('This Month',),
                                               style: TextStyle(
                                                 fontSize: 11,
-                                                color: Colors.grey.shade600,
+                                                color: Colors.black,
                                               ),
                                             ),
                                             Text(
-                                              homeController
-                                                  .myOrdersThisMonth
+                                              homeController.myOrdersThisMonth
                                                   .value
                                                   .toString()
                                                   .padLeft(2, '0'),
                                               style: const TextStyle(
                                                 fontSize: 16,
+                                                color: Colors.black,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
@@ -207,20 +249,17 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
                                         Column(
                                           children: [
                                             Text(
-                                              AppTranslations.translateValue(
-                                                'Total',
-                                              ),
+                                              AppTranslations.translateValue('Total',),
                                               style: TextStyle(
                                                 fontSize: 11,
-                                                color: Colors.grey.shade600,
+                                                color: Colors.black,
                                               ),
                                             ),
                                             Text(
-                                              homeController.myOrdersTotal.value
-                                                  .toString()
-                                                  .padLeft(2, '0'),
+                                              homeController.myOrdersTotal.value.toString().padLeft(2, '0'),
                                               style: const TextStyle(
                                                 fontSize: 16,
+                                                color: Colors.black,
                                                 fontWeight: FontWeight.bold,
                                               ),
                                             ),
@@ -262,12 +301,10 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
                                       ),
                                       const SizedBox(width: 6),
                                       Text(
-                                        AppTranslations.translateValue(
-                                          'Total Income',
-                                        ),
+                                        AppTranslations.translateValue('Total Income',),
                                         style: TextStyle(
                                           fontSize: 14,
-                                          color: Colors.grey.shade700,
+                                          color: Colors.black,
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
