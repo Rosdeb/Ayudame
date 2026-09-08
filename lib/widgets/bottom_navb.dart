@@ -9,105 +9,97 @@ import '../views/business/Activities/ActivitiesPage.dart';
 import '../views/business/employee/all_employee.dart';
 import '../views/business/home/BusinessHomePageScreen.dart';
 import '../views/business/profile/BusinessProfile.dart';
+import '../controller/business/bottom_nav_controller.dart';
 
-class BottomNavScreen extends StatefulWidget {
-  const BottomNavScreen({super.key});
+class BottomNavScreen extends StatelessWidget {
+  BottomNavScreen({super.key});
 
-  @override
-  State<BottomNavScreen> createState() => _BottomNavScreenState();
-}
-
-class _BottomNavScreenState extends State<BottomNavScreen> {
-  int selectedIndex = 0;
-
-  void navigationItemTap(int index) {
-    setState(() {
-      selectedIndex = index;
-    });
-  }
+  final BusinessBottomNavController controller = Get.put(BusinessBottomNavController());
 
   final List<Widget> _pages = [
-    BusinessHomePageScreen(),
-    BusinessEmployeeListScreen(),
-    ActivitiesPage(),
-    Businessprofile(),
+     BusinessHomePageScreen(),
+     BusinessEmployeeListScreen(),
+    const ActivitiesPage(),
+    const Businessprofile(),
   ];
-
-  // Create nav items in a getter
-  List<BottomNavigationBarItem> get _navItems => [
-    _navItem(AppIcons.home, AppIcons.homes, "bottom_nav.home".tr, 0),
-    _navItem(AppIcons.employee, AppIcons.employees, "bottom_nav.employees".tr, 1),
-    _navItem(AppIcons.activity, AppIcons.activitys, "bottom_nav.activities".tr, 2),
-    _navItem(AppIcons.profile, AppIcons.profiles, "bottom_nav.profile".tr, 3),
-  ];
-
-
-
-
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _pages[selectedIndex],
-
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Color(0xFFE7F4F6),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.r),
-            topRight: Radius.circular(20.r),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF000000).withOpacity(0.08),
-              offset: const Offset(4, 0),
-              blurRadius: 4,
-              spreadRadius: 0,
+    return Obx(() {
+      return PopScope(
+        canPop: controller.selectedIndex.value == 0,
+        onPopInvokedWithResult: (didPop, result) {
+          if (didPop) return;
+          controller.changeTabIndex(0);
+        },
+        child: Scaffold(
+          body: _pages[controller.selectedIndex.value],
+          bottomNavigationBar: Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFFE7F4F6),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.r),
+                topRight: Radius.circular(20.r),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF000000).withOpacity(0.08),
+                  offset: const Offset(4, 0),
+                  blurRadius: 4,
+                  spreadRadius: 0,
+                ),
+              ],
+              border: const Border(
+                top: BorderSide(color: Color(0xFFE3E6F0), width: 1),
+              ),
             ),
-          ],
-          border: const Border(
-            top: BorderSide(color: Color(0xFFE3E6F0), width: 1),
+            height: 95.h,
+            child: BottomNavigationBar(
+              elevation: 0,
+              type: BottomNavigationBarType.fixed,
+              currentIndex: controller.selectedIndex.value,
+              selectedItemColor: AppColors.mainAppColor,
+              selectedLabelStyle: TextStyle(
+                fontFamily: 'SegeoUi_bold',
+                fontWeight: FontWeight.w700,
+                fontSize: 12.sp,
+                color: AppColors.mainAppColor,
+              ),
+              unselectedLabelStyle: TextStyle(
+                fontFamily: 'SegeoUi_bold',
+                fontWeight: FontWeight.w600,
+                fontSize: 12.sp,
+                color: AppColors.grey,
+              ),
+              showSelectedLabels: true,
+              unselectedItemColor: AppColors.grey,
+              backgroundColor: Colors.transparent,
+              onTap: controller.changeTabIndex,
+              items: [
+                _navItem(AppIcons.home, AppIcons.homes, "bottom_nav.home".tr, 0, controller.selectedIndex.value),
+                _navItem(AppIcons.employee, AppIcons.employees, "bottom_nav.employees".tr, 1, controller.selectedIndex.value),
+                _navItem(AppIcons.activity, AppIcons.activitys, "bottom_nav.activities".tr, 2, controller.selectedIndex.value),
+                _navItem(AppIcons.profile, AppIcons.profiles, "bottom_nav.profile".tr, 3, controller.selectedIndex.value),
+              ],
+            ),
           ),
         ),
-        height: 95.h,
-        child: BottomNavigationBar(
-          elevation: 0,
-          type: BottomNavigationBarType.fixed,
-          currentIndex: selectedIndex,
-          selectedItemColor: AppColors.mainAppColor,
-          selectedLabelStyle: TextStyle(
-            fontFamily: 'SegeoUi_bold',
-            fontWeight: FontWeight.w700,
-            fontSize: 12.sp,
-            color: AppColors.mainAppColor,
-          ),
-          unselectedLabelStyle: TextStyle(
-            fontFamily: 'SegeoUi_bold',
-            fontWeight: FontWeight.w600,
-            fontSize: 12.sp,
-            color: AppColors.grey,
-          ),
-          showSelectedLabels: true,
-          unselectedItemColor: AppColors.grey,
-          backgroundColor: Colors.transparent,
-          onTap: navigationItemTap,
-          items: _navItems,
-        ),
-      ),
-    );
+      );
+    });
   }
 
   BottomNavigationBarItem _navItem(
     String unselected,
-    String selected, // Only one path needed
+    String selected,
     String label,
     int index,
+    int currentIndex,
   ) {
     return BottomNavigationBarItem(
       icon: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SvgPicture.asset(selectedIndex == index ? selected : unselected),
+          SvgPicture.asset(currentIndex == index ? selected : unselected),
           SizedBox(height: 10.h),
         ],
       ),

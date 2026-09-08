@@ -24,7 +24,7 @@ class BusinessEmployeeListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
-      appBar: CustomAppBar(title: "My Employee "),
+      appBar: CustomAppBar(title: "My Employee ",showBackButton: false,),
       body: Padding(
         padding: EdgeInsets.all(16.w),
 

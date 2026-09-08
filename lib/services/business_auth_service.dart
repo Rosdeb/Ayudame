@@ -657,14 +657,24 @@ class BusinessAuthService {
   }
 
   /// Get Activities
-  Future<List<dynamic>> getActivities() async {
+  Future<List<dynamic>> getActivities({String? timeFilter}) async {
     try {
+      String endpoint = '/api/business-owners/activities';
+      if (timeFilter != null && timeFilter.isNotEmpty && timeFilter.toLowerCase() != 'all') {
+        // Map common UI terms to backend parameters if needed
+        String filterVal = timeFilter.toLowerCase();
+        if (filterVal == 'this week') filterVal = 'week';
+        if (filterVal == 'this month') filterVal = 'month';
+        
+        endpoint += '?filter=$filterVal';
+      }
+
       final response = await ApiService.get(
-        endpoint: '/api/business-owners/activities',
+        endpoint: endpoint,
         requireAuth: true,
       );
 
-      debugPrint("📥 Get Activities Response: ${response.body}");
+      debugPrint("📥 Get Activities Response ($endpoint): ${response.body}");
 
       final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
       if (response.statusCode == 200) {

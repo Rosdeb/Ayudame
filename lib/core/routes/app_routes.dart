@@ -288,7 +288,7 @@ class AppRoutes {
     ),
 
     // Business
-    GetPage(name: businessHome, page: () => const BottomNavScreen(), middlewares: [AuthMiddleware()]),
+    GetPage(name: businessHome, page: () => BottomNavScreen(), middlewares: [AuthMiddleware()]),
     GetPage(name: businessLogin, page: () => const BusinessLoginScreen()),
     GetPage(name: businessRegister, page: () => const BusinessSignUpScreen()),
     GetPage(name: businessOtp, page: () => const BusinessSignUpVerification()),

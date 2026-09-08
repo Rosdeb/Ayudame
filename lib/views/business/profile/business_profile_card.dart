@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:middle_ware/core/app_icons.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/core/localization/app_translations.dart';
 import 'package:middle_ware/views/business/profile/business_profile_details.dart';
 import 'package:middle_ware/viewmodels/business_auth_viewmodel.dart';
@@ -14,125 +16,138 @@ class BusinessProfileCard extends StatelessWidget {
     final controller = Get.find<BusinessAuthViewModel>();
 
     return Obx(() {
-      final business = controller.businessProfile.value;
-      final businessName =
-          business?.businessName ??
-          AppTranslations.translateValue("Business Name");
-      final location =
-          business?.address ??
-          AppTranslations.translateValue("Business Location");
-      final logo = business?.logo;
-      final cover = business?.coverPhoto;
+      if (controller.isLoading.value) {
+        return const Center(child: CircularProgressIndicator());
+      }
 
-      return Card(
-        elevation: 3,
-        color: Colors.white,
-        shadowColor: Colors.black12,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-          side: const BorderSide(color: Color(0xFFF0F0F0), width: 1),
-        ),
-        child: InkWell(
-          onTap: () => Get.to(() => const BusinessProfileViewPage()),
-          borderRadius: BorderRadius.circular(14),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: cover != null && cover.startsWith('http')
-                          ? Image.network(
-                              cover,
-                              height: 150,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  Image.asset(
-                                    'assets/images/business.png',
-                                    height: 150,
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                  ),
-                            )
-                          : Image.asset(
-                              'assets/images/business.png',
-                              height: 150,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                            ),
-                    ),
-                    Positioned(
-                      bottom: -20,
-                      left: 12,
-                      child: Container(
-                        padding: const EdgeInsets.all(3),
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: CircleAvatar(
-                            radius: 28,
-                            backgroundColor: Colors.grey[200],
-                            backgroundImage:
-                                logo != null && logo.startsWith('http')
-                                ? NetworkImage(logo)
-                                : const AssetImage('assets/images/b_logo.png')
-                                      as ImageProvider,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 32),
-                Text(
-                  businessName,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF333333),
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    SvgPicture.asset(
-                      AppIcons.location,
-                      width: 18,
-                      height: 18,
-                      colorFilter: ColorFilter.mode(
-                        Colors.grey[600]!,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        location,
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 14,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+      final business = controller.businessProfile.value;
+      if (business == null) {
+        return Center(
+          child: Text(
+            AppTranslations.translateValue("Business data not found"),
+          ),
+        );
+      }
+
+      final String businessName = business.businessName ?? AppTranslations.translateValue("Business Name");
+      final String email = business.email ?? "";
+      final String? logo = business.logo;
+
+      return GestureDetector(
+        onTap: () => Get.to(() => const BusinessProfileViewPage()),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(12.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(
+              color: const Color(0xFFE3E6F0),
+              width: 0.6,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.10),
+                offset: const Offset(0, 2),
+                blurRadius: 2,
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              // ----------- Profile Image ----------
+
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(
+                    color: Color(0xFFE3E6F0),
+                    width: 0.6,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.10),
+                      offset: const Offset(0, 2),
+                      blurRadius: 2,
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 38,
+                      backgroundColor: Colors.grey[200],
+                      child: ClipOval(
+                        child: logo == null || logo.isEmpty || !logo.startsWith('http')
+                            ? Image.asset(
+                          "assets/images/b_logo.png",
+                          width: 50,
+                          height: 60,
+                          fit: BoxFit.contain,
+                        )
+                            : CachedNetworkImage(
+                          imageUrl: logo,
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Shimmer.fromColors(
+                            baseColor: Colors.grey[300]!,
+                            highlightColor: Colors.grey[100]!,
+                            child: Container(
+                              width: 80,
+                              height: 80,
+                              decoration: const BoxDecoration(
+                                color: Colors.grey,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => Image.asset(
+                            "assets/images/b_logo.png",
+                            width: 50,
+                            height: 60,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 20,),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          businessName,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          email,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black87,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+
+                  ],
+                ),
+              ),
+
+              const SizedBox(width: 16),
+
+
+            ],
           ),
         ),
       );

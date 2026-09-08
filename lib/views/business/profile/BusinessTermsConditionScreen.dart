@@ -35,14 +35,28 @@ class _BusinessTermsConditionScreenState
           return const Center(child: CircularProgressIndicator());
         }
 
-        final terms = viewModel.termsConditions.value;
-        if (terms == null) {
+        final termsData = viewModel.termsConditions.value;
+        if (termsData == null) {
           return Center(
             child: Text(
               AppTranslations.translateValue('profile.terms_condition'),
             ),
           );
         }
+
+        final settings = termsData['settings'] ?? termsData;
+        final String title = settings['title']?.toString() ?? AppTranslations.translateValue('legal.terms_title');
+        
+        // Strip HTML tags and decode common entities for clean display
+        final String rawContent = settings['content']?.toString() ?? '';
+        final String cleanContent = rawContent
+            .replaceAll(RegExp(r'<[^>]*>', multiLine: true, caseSensitive: false), '')
+            .replaceAll('&nbsp;', ' ')
+            .replaceAll('&amp;', '&')
+            .replaceAll('&quot;', '"')
+            .replaceAll('&#39;', "'")
+            .replaceAll('&lt;', '<')
+            .replaceAll('&gt;', '>');
 
         return SingleChildScrollView(
           child: Padding(
@@ -51,8 +65,7 @@ class _BusinessTermsConditionScreenState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  terms['title']?.toString() ??
-                      AppTranslations.translateValue('legal.terms_title'),
+                  title,
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -61,7 +74,7 @@ class _BusinessTermsConditionScreenState
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  terms['content']?.toString() ?? '',
+                  cleanContent.trim(),
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.grey[700],

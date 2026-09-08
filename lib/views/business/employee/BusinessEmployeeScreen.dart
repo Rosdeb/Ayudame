@@ -20,7 +20,7 @@ class EmployeeDetailsScreen extends StatefulWidget {
 class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
   int selectedTab = 0; // 0: Overview, 1: Activities, 2: Orders
   late BusinessEmployeeModel employee;
-  bool _isActive = true;
+  late RxBool _isActiveObs;
   final BusinessEmployeeViewModel _viewModel =
       Get.find<BusinessEmployeeViewModel>();
 
@@ -39,7 +39,7 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
       // Fallback
       employee = BusinessEmployeeModel(name: "Unknown");
     }
-    _isActive = employee.isActive ?? true;
+    _isActiveObs = (employee.isActive ?? true).obs;
   }
 
   @override
@@ -84,18 +84,18 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
               Positioned(
                 bottom: 5,
                 right: 5,
-                child: Container(
+                child: Obx(() => Container(
                   height: 15,
                   width: 15,
                   decoration: BoxDecoration(
-                    color: _isActive ? Colors.green : Colors.grey,
+                    color: _isActiveObs.value ? Colors.green : Colors.grey,
                     shape: BoxShape.circle,
                     border: Border.all(
                       color: const Color(0xFF1C5941),
                       width: 2,
                     ),
                   ),
-                ),
+                )),
               ),
             ],
           ),
@@ -798,18 +798,16 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            Container(
+            SizedBox(
               width: 300,
               height: 54,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(10),
-              ),
               child: ListTile(
-                leading: SvgPicture.asset('assets/icons/eddit.svg'),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                tileColor: Colors.grey.shade300,
+                leading: SvgPicture.asset('assets/icons/edit.svg'),
                 title: Text(
                   AppTranslations.translateValue("Edit Employee"),
-                  style: TextStyle(fontWeight: FontWeight.w500),
+                  style: const TextStyle(fontWeight: FontWeight.w500),
                 ),
                 onTap: () {
                   Get.to(() => SaveEmployee(employee: employee));
@@ -818,20 +816,18 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
             ),
 
             const SizedBox(height: 20),
-            Container(
+            SizedBox(
               width: 300,
               height: 54,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: ListTile(
+              child: Obx(() => ListTile(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                tileColor: Colors.grey.shade300,
                 leading: SvgPicture.asset(
                   'assets/icons/block.svg',
-                  color: Colors.black87,
+                  colorFilter: const ColorFilter.mode(Colors.black87, BlendMode.srcIn),
                 ),
                 title: Text(
-                  _isActive ? "Block Employee" : "Unblock Employee",
+                  _isActiveObs.value ? "Block Employee" : "Unblock Employee",
                   style: const TextStyle(fontWeight: FontWeight.w500),
                 ),
                 onTap: () async {
@@ -841,30 +837,26 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
                       employee.id!,
                     );
                     if (success) {
-                      setState(() {
-                        _isActive = !_isActive;
-                      });
+                      _isActiveObs.value = !_isActiveObs.value;
                     }
                   }
                 },
-              ),
+              )),
             ),
-            SizedBox(height: 20),
-            Container(
+            const SizedBox(height: 20),
+            SizedBox(
               width: 300,
               height: 54,
-              decoration: BoxDecoration(
-                color: Color(0xFFFEF2F2),
-                borderRadius: BorderRadius.circular(10),
-              ),
               child: ListTile(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                tileColor: const Color(0xFFFEF2F2),
                 leading: SvgPicture.asset(
                   'assets/icons/remove.svg',
-                  color: Colors.red,
+                  colorFilter: const ColorFilter.mode(Colors.red, BlendMode.srcIn),
                 ),
                 title: Text(
-                  AppTranslations.translateValue("Remove Employee"),
-                  style: TextStyle(
+                  AppTranslations.translateValue("Delete Employee"),
+                  style: const TextStyle(
                     color: Colors.red,
                     fontWeight: FontWeight.w500,
                   ),
@@ -874,19 +866,14 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
                   if (employee.id != null) {
                     Get.dialog(
                       AlertDialog(
-                        title: Text(
-                          AppTranslations.translateValue("Remove Employee"),
-                        ),
+                        title: Text(AppTranslations.translateValue("Remove Employee")),
                         content: Text(
-                          "Are you sure you want to remove this employee? This action cannot be undone."
-                              .tr,
+                          "Are you sure you want to remove this employee? This action cannot be undone.".tr,
                         ),
                         actions: [
                           TextButton(
                             onPressed: () => Get.back(),
-                            child: Text(
-                              AppTranslations.translateValue("Cancel"),
-                            ),
+                            child: Text(AppTranslations.translateValue("Cancel")),
                           ),
                           TextButton(
                             onPressed: () {
@@ -895,7 +882,7 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
                             },
                             child: Text(
                               AppTranslations.translateValue("Remove"),
-                              style: TextStyle(color: Colors.red),
+                              style: const TextStyle(color: Colors.red),
                             ),
                           ),
                         ],

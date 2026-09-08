@@ -58,7 +58,7 @@ class BusinessAuthViewModel extends GetxController {
 
   void _handleError(dynamic e, {String prefix = "Error"}) {
     String errorMsg = e.toString().replaceAll('Exception: ', '');
-    debugPrint("❌ $prefix: $errorMsg");
+    debugPrint(" $prefix: $errorMsg");
 
     if (errorMsg.toLowerCase().contains("token") &&
         (errorMsg.toLowerCase().contains("expired") ||
@@ -173,19 +173,11 @@ class BusinessAuthViewModel extends GetxController {
           await StorageService.clearSavedCredentials('business');
         }
 
-        // Show success message
-        Get.snackbar(
-          "common.success".tr,
-          response.message,
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
 
         // Navigate to business home
-        Get.offNamed(AppRoutes.businessHome);
+        Get.offAllNamed(AppRoutes.businessHome);
       } else {
-        debugPrint("❌ Login failed: ${response.message}");
+        debugPrint(" Login failed: ${response.message}");
         Get.snackbar(
           "common.error".tr,
           response.message,
@@ -195,14 +187,7 @@ class BusinessAuthViewModel extends GetxController {
         );
       }
     } catch (e) {
-      debugPrint("❌ Login Exception: $e");
-      Get.snackbar(
-        "common.error".tr,
-        e.toString().replaceAll('Exception: ', ''),
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      debugPrint(" Login Exception: $e");
     } finally {
       isLoading.value = false;
     }
@@ -271,17 +256,16 @@ class BusinessAuthViewModel extends GetxController {
         isLoggedIn.value = true;
 
         // Set temp contact for verification
-        tempRegistrationEmail =
-            email ?? (phone != null ? "$phone@tempmail.com" : '');
+        tempRegistrationEmail = email ?? (phone != null ? "$phone@tempmail.com" : '');
         tempRegistrationPhone = phone ?? '';
-
-        Get.snackbar(
-          "common.success".tr,
-          "auth.account_created".tr,
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
+        //
+        // Get.snackbar(
+        //   "common.success".tr,
+        //   "auth.account_created".tr,
+        //   snackPosition: SnackPosition.BOTTOM,
+        //   backgroundColor: Colors.green,
+        //   colorText: Colors.white,
+        // );
 
         // Navigate to OTP Verification
         Get.toNamed(AppRoutes.businessOtp, arguments: {'isRegistration': true});
@@ -295,7 +279,7 @@ class BusinessAuthViewModel extends GetxController {
         );
       }
     } catch (e) {
-      debugPrint("❌ Registration Exception: $e");
+      debugPrint(" Registration Exception: $e");
       Get.snackbar(
         "common.error".tr,
         e.toString().replaceAll('Exception: ', ''),
@@ -384,20 +368,6 @@ class BusinessAuthViewModel extends GetxController {
         otp: otp,
       );
 
-      Get.snackbar(
-        "common.success".tr,
-        response['message'] ?? "auth.account_created".tr,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
-
-      // Navigate to Home or Login
-      // Since registration already stored token and session, we can go to Home
-      // But usually after OTP verification we might want to ensure session is fresh
-      // Based on previous flow, we are already logged in locally in registerFromUI
-      // So we can just go Home.
-      // Navigate to Login screen as requested
       Get.offAllNamed(AppRoutes.businessLogin);
     } catch (e) {
       Get.snackbar(
@@ -738,11 +708,11 @@ class BusinessAuthViewModel extends GetxController {
   var activities = Rxn<List<dynamic>>();
 
   /// Get Activities
-  Future<void> getActivities() async {
+  Future<void> getActivities({String? timeFilter}) async {
     try {
-      final data = await _authService.getActivities();
+      final data = await _authService.getActivities(timeFilter: timeFilter);
       activities.value = data;
-      debugPrint("✅ Loaded activities: ${data.length} items");
+      debugPrint("✅ Loaded activities: ${data.length} items (filter: $timeFilter)");
     } catch (e) {
       debugPrint("❌ Error loading activities: $e");
     }

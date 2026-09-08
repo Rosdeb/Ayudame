@@ -33,7 +33,7 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _viewModel.getActivities();
+      _viewModel.getActivities(timeFilter: selectedTimeFilter);
     });
   }
 
@@ -189,6 +189,8 @@ class _ActivitiesPageState extends State<ActivitiesPage> {
                 setState(() {
                   selectedTimeFilter = filter;
                 });
+                // Fetch new data from API based on the selected time filter
+                _viewModel.getActivities(timeFilter: filter);
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -51,64 +52,103 @@ class _BusinessprofileState extends State<Businessprofile> {
 
                   Obx(() {
                     final business = _viewModel.currentBusiness.value;
-                    return Column(
-                      children: [
-                        Stack(
-                          children: [
-                            Container(
-                              width: 100,
-                              height: 100,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.white,
-                                  width: 3,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
-                                    blurRadius: 10,
-                                    spreadRadius: 2,
-                                  ),
-                                ],
+                    final String? logo = business?.logo;
+
+                    return Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: const EdgeInsets.all(12.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: const Color(0xFFE3E6F0),
+                          width: 0.6,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.10),
+                            offset: const Offset(0, 2),
+                            blurRadius: 2,
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          // ----------- Profile Image ----------
+                          Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: AppColors.mainAppColor,
+                                width: 1.5,
                               ),
-                              child: CircleAvatar(
-                                radius: 50,
-                                backgroundImage:
-                                    business?.logo != null &&
-                                        business!.logo!.startsWith('http')
-                                    ? NetworkImage(business.logo!)
-                                          as ImageProvider
-                                    : const AssetImage(
-                                        'assets/images/profile.png',
+                            ),
+                            child: CircleAvatar(
+                              radius: 38,
+                              backgroundColor: Colors.grey[200],
+                              child: ClipOval(
+                                child: logo == null || logo.isEmpty || !logo.startsWith('http')
+                                    ? Image.asset(
+                                        "assets/images/b_logo.png",
+                                        width: 80,
+                                        height: 80,
+                                        fit: BoxFit.contain,
+                                      )
+                                    : CachedNetworkImage(
+                                        imageUrl: logo,
+                                        width: 80,
+                                        height: 80,
+                                        fit: BoxFit.cover,
+                                        placeholder: (context, url) => Container(
+                                          width: 80,
+                                          height: 80,
+                                          color: Colors.grey[300],
+                                        ),
+                                        errorWidget: (context, url, error) => Image.asset(
+                                          "assets/images/b_logo.png",
+                                          width: 80,
+                                          height: 80,
+                                          fit: BoxFit.contain,
+                                        ),
                                       ),
                               ),
                             ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 16),
-
-                        Text(
-                          business?.ownerName ?? 'Business Owner',
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
                           ),
-                        ),
 
-                        const SizedBox(height: 4),
-
-                        Text(
-                          business?.email ?? 'email@example.com',
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: Colors.black54,
-                            fontFamily: 'Inter',
+                          const SizedBox(width: 16),
+                          
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  business?.ownerName ?? 'Business Owner',
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black87,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  business?.email ?? 'email@example.com',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black54,
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: "Inter",
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     );
                   }),
                   const SizedBox(height: 20),

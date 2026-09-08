@@ -201,8 +201,7 @@ class _BusinessSignUpVerificationState
                               if (isRegistration) {
                                 _authViewModel.verifyRegistrationOtp(otp);
                               } else {
-                                _authViewModel.verificationCodeController.text =
-                                    otp;
+                                _authViewModel.verificationCodeController.text = otp;
                                 _authViewModel.verifyOtp();
                               }
                             } else {

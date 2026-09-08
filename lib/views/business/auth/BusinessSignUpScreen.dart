@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'dart:io';
+import 'dart:convert';
+import '../../../services/api_service.dart';
 import '../../../viewmodels/business_auth_viewmodel.dart';
 import 'package:middle_ware/core/localization/app_translations.dart';
 
@@ -26,14 +28,60 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
   final _businessAddressController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final _occupationController = TextEditingController();
-  final _referenceIdController = TextEditingController();
+  final TextEditingController _occupationController = TextEditingController();
+  final TextEditingController _referenceIdController = TextEditingController();
 
   File? _businessPhoto;
   File? _idCardFront;
   File? _idCardBack;
+  
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+
+  bool _categoriesLoading = true;
+  String _categoriesError = '';
+  List<dynamic> _categories = [];
+  String? _selectedCategoryId;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCategories();
+  }
+
+  Future<void> _fetchCategories() async {
+    try {
+      final response = await ApiService.get(
+        endpoint: '/api/categories',
+        requireAuth: false,
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true) {
+          setState(() {
+            _categories = data['data']['categories'] ?? [];
+            _categoriesLoading = false;
+          });
+        } else {
+          setState(() {
+            _categoriesError = 'Failed to load categories';
+            _categoriesLoading = false;
+          });
+        }
+      } else {
+        setState(() {
+          _categoriesError = 'Server error: ${response.statusCode}';
+          _categoriesLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _categoriesError = 'Network error. Try again.';
+        _categoriesLoading = false;
+      });
+    }
+  }
 
   final ImagePicker _picker = ImagePicker();
 
@@ -191,17 +239,7 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
                     return null;
                   },
                 ),
-                _buildLabelledField(
-                  'Business category',
-                  _businessCategoryController,
-                  'Enter business category',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter business category';
-                    }
-                    return null;
-                  },
-                ),
+                _buildCategoryDropdown(),
                 _buildLabelledField(
                   'Business address',
                   _businessAddressController,
@@ -322,8 +360,7 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
                 const SizedBox(height: 30),
 
                 // Sign Up Button
-                Obx(
-                  () => SizedBox(
+                Obx(() => SizedBox(
                     width: double.infinity,
                     height: 52,
                     child: ElevatedButton(
@@ -347,8 +384,7 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
                                     _idCardBack == null) {
                                   Get.snackbar(
                                     AppTranslations.translateValue("Required"),
-                                    "Please upload both sides of your ID Card"
-                                        .tr,
+                                    "Please upload both sides of your ID Card".tr,
                                     backgroundColor: Colors.red,
                                     colorText: Colors.white,
                                     snackPosition: SnackPosition.BOTTOM,
@@ -359,17 +395,13 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
                                 _authViewModel.signUp(
                                   fullName: _fullNameController.text.trim(),
                                   contact: _emailPhoneController.text.trim(),
-                                  businessName: _businessNameController.text
-                                      .trim(),
-                                  category: _businessCategoryController.text
-                                      .trim(),
-                                  address: _businessAddressController.text
-                                      .trim(),
+                                  businessName: _businessNameController.text.trim(),
+                                  category: _businessCategoryController.text.trim(),
+                                  address: _businessAddressController.text.trim(),
                                   password: _passwordController.text,
                                   dob: _dobController.text.trim(),
                                   occupation: _occupationController.text.trim(),
-                                  referenceId: _referenceIdController.text
-                                      .trim(),
+                                  referenceId: _referenceIdController.text.trim(),
                                   businessPhotoPath: _businessPhoto?.path,
                                   idCardFrontPath: _idCardFront?.path,
                                   idCardBackPath: _idCardBack?.path,
@@ -420,33 +452,119 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
     TextInputType? keyboardType,
     String? Function(String?)? validator,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFFF8F9FA),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFD8D8D8)),
-      ),
-      child: TextFormField(
-        controller: controller,
-        keyboardType: keyboardType,
-        validator: validator,
-        decoration: InputDecoration(
-          fillColor: Color(0xFFFAFAFA),
-          hintText: hint,
-          hintStyle: const TextStyle(color: Color(0xFFBFBFBF), fontSize: 14),
-          border: InputBorder.none,
-          errorStyle: const TextStyle(height: 0.1, fontSize: 10),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 14,
-            vertical: 14,
-          ),
-          suffixIcon: suffixIcon != null
-              ? Icon(suffixIcon, color: Color(0xFFBFBFBF), size: 20)
-              : null,
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      validator: validator,
+      decoration: InputDecoration(
+        fillColor: const Color(0xFFF8F9FA),
+        filled: true,
+        hintText: hint,
+        hintStyle: const TextStyle(color: Color(0xFFBFBFBF), fontSize: 14),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Color(0xFFD8D8D8)),
         ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Color(0xFFD8D8D8)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Color(0xFF1C5941)),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Colors.red),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Colors.red),
+        ),
+        errorStyle: const TextStyle(height: 0.1, fontSize: 10),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 14,
+        ),
+        suffixIcon: suffixIcon != null
+            ? Icon(suffixIcon, color: const Color(0xFFBFBFBF), size: 20)
+            : null,
       ),
     );
   }
+  Widget _buildCategoryDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Business category',
+          style: TextStyle(
+            fontSize: 14,
+            fontFamily: "Inter",
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 8),
+        _categoriesLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _categoriesError.isNotEmpty
+                ? Text(_categoriesError, style: const TextStyle(color: Colors.red))
+                : DropdownButtonFormField<String>(
+                    value: _selectedCategoryId,
+                    hint: const Text(
+                      'Select category',
+                      style: TextStyle(color: Color(0xFFBFBFBF), fontSize: 14),
+                    ),
+                    isExpanded: true,
+                    decoration: InputDecoration(
+                      fillColor: const Color(0xFFF8F9FA),
+                      filled: true,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(color: Color(0xFFD8D8D8)),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(color: Color(0xFFD8D8D8)),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(color: Color(0xFF1C5941)),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: const BorderSide(color: Colors.red),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 14,
+                      ),
+                    ),
+                    items: _categories.map<DropdownMenuItem<String>>((cat) {
+                      return DropdownMenuItem<String>(
+                        value: cat['_id']?.toString() ?? '',
+                        child: Text(cat['name'] ?? 'Unknown'),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedCategoryId = value;
+                        // Still update the old controller just in case it's read somewhere else, though we'll update the signUp call
+                        _businessCategoryController.text = value ?? '';
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please select a business category';
+                      }
+                      return null;
+                    },
+                  ),
+        const SizedBox(height: 16),
+      ],
+    );
+  }
+
 
   Widget _buildLabelledField(
     String label,
@@ -486,34 +604,49 @@ class _BusinessSignUpScreenState extends State<BusinessSignUpScreen> {
     VoidCallback toggle, {
     String? Function(String?)? validator,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFFF8F9FA),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFE8E8E8)),
-      ),
-      child: TextFormField(
-        controller: controller,
-        obscureText: obscure,
-        validator: validator,
-        decoration: InputDecoration(
-          hintText: hint,
-          border: InputBorder.none,
-          errorStyle: const TextStyle(height: 0.1, fontSize: 10),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 14,
-            vertical: 14,
+    return TextFormField(
+      controller: controller,
+      obscureText: obscure,
+      validator: validator,
+      decoration: InputDecoration(
+        fillColor: const Color(0xFFF8F9FA),
+        filled: true,
+        hintText: hint,
+        hintStyle: const TextStyle(color: Color(0xFFBFBFBF), fontSize: 14),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Color(0xFFE8E8E8)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Color(0xFFE8E8E8)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Color(0xFF1C5941)),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Colors.red),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Colors.red),
+        ),
+        errorStyle: const TextStyle(height: 0.1, fontSize: 10),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 14,
+        ),
+        suffixIcon: IconButton(
+          icon: Icon(
+            obscure
+                ? Icons.visibility_off_outlined
+                : Icons.visibility_outlined,
+            color: Colors.grey,
+            size: 20,
           ),
-          suffixIcon: IconButton(
-            icon: Icon(
-              obscure
-                  ? Icons.visibility_off_outlined
-                  : Icons.visibility_outlined,
-              color: Colors.grey,
-              size: 20,
-            ),
-            onPressed: toggle,
-          ),
+          onPressed: toggle,
         ),
       ),
     );
