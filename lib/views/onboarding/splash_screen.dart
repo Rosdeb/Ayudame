@@ -40,8 +40,8 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _checkLoginStatus() async {
-    // Wait for 2 seconds to show splash screen
-    await Future.delayed(const Duration(seconds: 2));
+    // Wait for 0.5 seconds to show splash screen briefly
+    await Future.delayed(const Duration(milliseconds: 500));
 
     // Check if user has a valid token (support both token helpers)
     final tokenFromService = await TokenService().getToken();

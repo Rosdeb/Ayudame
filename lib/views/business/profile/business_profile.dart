@@ -52,7 +52,7 @@ class _BusinessprofileState extends State<Businessprofile> {
 
                   Obx(() {
                     final business = _viewModel.currentBusiness.value;
-                    final String? logo = business?.logo;
+                    final String? profilePic = business?.profilePicture;
 
                     return Container(
                       width: double.infinity,
@@ -67,7 +67,7 @@ class _BusinessprofileState extends State<Businessprofile> {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.10),
+                            color: Colors.black.withOpacity(0.10),
                             offset: const Offset(0, 2),
                             blurRadius: 2,
                           ),
@@ -88,15 +88,15 @@ class _BusinessprofileState extends State<Businessprofile> {
                               radius: 38,
                               backgroundColor: Colors.grey[200],
                               child: ClipOval(
-                                child: logo == null || logo.isEmpty || !logo.startsWith('http')
+                                child: profilePic == null || profilePic.isEmpty || !profilePic.startsWith('http')
                                     ? Image.asset(
-                                        "assets/images/b_logo.png",
+                                        "assets/images/profile.png",
                                         width: 80,
                                         height: 80,
-                                        fit: BoxFit.contain,
+                                        fit: BoxFit.cover,
                                       )
                                     : CachedNetworkImage(
-                                        imageUrl: logo,
+                                        imageUrl: _viewModel.getImageUrl(profilePic),
                                         width: 80,
                                         height: 80,
                                         fit: BoxFit.cover,
@@ -106,10 +106,10 @@ class _BusinessprofileState extends State<Businessprofile> {
                                           color: Colors.grey[300],
                                         ),
                                         errorWidget: (context, url, error) => Image.asset(
-                                          "assets/images/b_logo.png",
+                                          "assets/images/profile.png",
                                           width: 80,
                                           height: 80,
-                                          fit: BoxFit.contain,
+                                          fit: BoxFit.cover,
                                         ),
                                       ),
                               ),

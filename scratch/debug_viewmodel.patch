@@ -1,0 +1,15 @@
+--- lib/viewmodels/business_auth_viewmodel.dart
++++ lib/viewmodels/business_auth_viewmodel.dart
+@@ -510,7 +510,8 @@
+     try {
+       final businessData = await _authService.getBusinessInfo();
+       currentBusiness.value = BusinessModel.fromJson(businessData);
+-      debugPrint("Loaded business info: ${currentBusiness.value?.businessName}",);
++      debugPrint("====== BUSINESS OWNER LOGS ======");
++      debugPrint("API Response: $businessData");
++      debugPrint("Parsed Logo: ${currentBusiness.value?.logo}");
++      debugPrint("Parsed Name: ${currentBusiness.value?.businessName}");
++      debugPrint("===============================");
+     } catch (e) {
+       debugPrint("Error loading business info: $e");
+     }

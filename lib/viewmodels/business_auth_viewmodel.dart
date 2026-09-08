@@ -27,6 +27,14 @@ class BusinessAuthViewModel extends GetxController {
   final BusinessAuthService _authService = BusinessAuthService();
 
   // Observable states
+  var imageVersion = DateTime.now().millisecondsSinceEpoch.obs;
+
+  String getImageUrl(String? url) {
+    if (url == null || url.isEmpty || !url.startsWith('http')) return url ?? "";
+    final separator = url.contains('?') ? '&' : '?';
+    return "$url${separator}v=${imageVersion.value}";
+  }
+
   var isLoading = false.obs;
   var currentBusiness = Rxn<BusinessModel>();
   var businessProfile = Rxn<BusinessModel>();
@@ -510,7 +518,12 @@ class BusinessAuthViewModel extends GetxController {
     try {
       final businessData = await _authService.getBusinessInfo();
       currentBusiness.value = BusinessModel.fromJson(businessData);
-      debugPrint("Loaded business info: ${currentBusiness.value?.businessName}",);
+      debugPrint("====== BUSINESS OWNER LOGS ======");
+      debugPrint("Raw API Data: $businessData");
+      debugPrint("Parsed Logo: ${currentBusiness.value?.logo}");
+      debugPrint("Parsed Name: ${currentBusiness.value?.businessName}");
+      debugPrint("Image Version: ${imageVersion.value}");
+      debugPrint("===============================");
     } catch (e) {
       debugPrint("Error loading business info: $e");
     }
@@ -563,8 +576,16 @@ class BusinessAuthViewModel extends GetxController {
         confirmPassword: confirmPassword,
       );
 
-      // Refresh business info
+      // Update business info directly from the PUT response data
+      if (response['data'] != null) {
+        currentBusiness.value = BusinessModel.fromJson(response['data']);
+        debugPrint("✅ Updated currentBusiness from PUT response!");
+      }
+      
+      // We can also fetch just to be perfectly synced
       await getBusinessInfo();
+      await getBusinessProfile();
+      imageVersion.value = DateTime.now().millisecondsSinceEpoch;
 
       // Update Local Storage with new data
       final business = currentBusiness.value;
@@ -599,11 +620,13 @@ class BusinessAuthViewModel extends GetxController {
     try {
       final profileData = await _authService.getBusinessProfile();
       businessProfile.value = BusinessModel.fromJson(profileData);
-      debugPrint(
-        "✅ Loaded business profile: ${businessProfile.value?.businessName}",
-      );
+      debugPrint("====== BUSINESS PROFILE LOGS ======");
+      debugPrint("API Response: $profileData");
+      debugPrint("Parsed Logo: ${businessProfile.value?.logo}");
+      debugPrint("=================================");
+      debugPrint("✅ Loaded business profile: ${businessProfile.value?.businessName}",);
     } catch (e) {
-      debugPrint("❌ Error loading business profile: $e");
+      debugPrint(" Error loading business profile: $e");
     } finally {
       isLoading.value = false;
     }
@@ -632,6 +655,7 @@ class BusinessAuthViewModel extends GetxController {
       // Refresh both
       await getBusinessProfile();
       await getBusinessInfo();
+      imageVersion.value = DateTime.now().millisecondsSinceEpoch;
 
       Get.snackbar(
         "common.success".tr,

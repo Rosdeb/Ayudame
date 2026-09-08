@@ -163,8 +163,10 @@ class BusinessAuthService {
         endpoint: '/api/business-owners/me',
       );
 
+      print("profile : $response");
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+        debugPrint("GET /api/business-owners/me RESPONSE: $jsonResponse");
         if (jsonResponse['success'] == true) {
           return jsonResponse['data'] as Map<String, dynamic>;
         } else {

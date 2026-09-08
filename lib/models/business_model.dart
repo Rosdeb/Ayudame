@@ -9,6 +9,7 @@ class BusinessModel {
   final String? businessType;
   final String? description;
   final String? logo; // Business Profile Photo / Logo
+  final String? profilePicture; // User's personal profile picture
   final String? coverPhoto;
   final String? occupation;
   final String? dateOfBirth;
@@ -25,6 +26,7 @@ class BusinessModel {
     this.businessType,
     this.description,
     this.logo,
+    this.profilePicture,
     this.coverPhoto,
     this.occupation,
     this.dateOfBirth,
@@ -105,13 +107,15 @@ class BusinessModel {
       logo: parseLogo(
         data['businessPhoto'] ??
             data['logo'] ??
-            (userData is Map ? userData['profilePicture'] : null) ??
-            (userData is Map ? userData['profilePhoto'] : null) ??
-            json['user']?['profilePicture'] ??
-            json['user']?['profilePhoto'] ??
-            data['profilePicture'] ??
-            data['profilePhoto'] ??
             data['photos'],
+      ),
+      profilePicture: parseLogo(
+        (userData is Map ? userData['profilePicture'] : null) ??
+        (userData is Map ? userData['profilePhoto'] : null) ??
+        json['user']?['profilePicture'] ??
+        json['user']?['profilePhoto'] ??
+        data['profilePicture'] ??
+        data['profilePhoto']
       ),
       coverPhoto:
           data['coverPhoto']?.toString() ??
@@ -140,6 +144,7 @@ class BusinessModel {
       'business_type': businessType,
       'description': description,
       'logo': logo,
+      'profilePicture': profilePicture,
       'cover_photo': coverPhoto,
       'occupation': occupation,
       'dateOfBirth': dateOfBirth,
@@ -159,6 +164,7 @@ class BusinessModel {
     String? businessType,
     String? description,
     String? logo,
+    String? profilePicture,
     String? coverPhoto,
     String? occupation,
     String? dateOfBirth,
@@ -175,6 +181,7 @@ class BusinessModel {
       businessType: businessType ?? this.businessType,
       description: description ?? this.description,
       logo: logo ?? this.logo,
+      profilePicture: profilePicture ?? this.profilePicture,
       coverPhoto: coverPhoto ?? this.coverPhoto,
       occupation: occupation ?? this.occupation,
       dateOfBirth: dateOfBirth ?? this.dateOfBirth,

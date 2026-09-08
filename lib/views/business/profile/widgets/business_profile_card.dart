@@ -47,7 +47,7 @@ class BusinessProfileCard extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.10),
+                color: Colors.black.withOpacity(0.10),
                 offset: const Offset(0, 2),
                 blurRadius: 2,
               ),
@@ -55,98 +55,70 @@ class BusinessProfileCard extends StatelessWidget {
           ),
           child: Row(
             children: [
-              // ----------- Profile Image ----------
-
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(12.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(
-                    color: Color(0xFFE3E6F0),
-                    width: 0.6,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.10),
-                      offset: const Offset(0, 2),
-                      blurRadius: 2,
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 38,
-                      backgroundColor: Colors.grey[200],
-                      child: ClipOval(
-                        child: logo == null || logo.isEmpty || !logo.startsWith('http')
-                            ? Image.asset(
-                          "assets/images/b_logo.png",
-                          width: 50,
-                          height: 60,
-                          fit: BoxFit.contain,
-                        )
-                            : CachedNetworkImage(
-                          imageUrl: logo,
-                          width: 80,
-                          height: 80,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => Shimmer.fromColors(
-                            baseColor: Colors.grey[300]!,
-                            highlightColor: Colors.grey[100]!,
-                            child: Container(
-                              width: 80,
-                              height: 80,
-                              decoration: const BoxDecoration(
-                                color: Colors.grey,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          ),
-                          errorWidget: (context, url, error) => Image.asset(
-                            "assets/images/b_logo.png",
-                            width: 50,
-                            height: 60,
-                            fit: BoxFit.contain,
-                          ),
+              CircleAvatar(
+                radius: 38,
+                backgroundColor: Colors.grey[200],
+                child: ClipOval(
+                  child: logo == null || logo.isEmpty || !logo.startsWith('http')
+                      ? Image.asset(
+                    "assets/images/b_logo.png",
+                    width: 50,
+                    height: 60,
+                    fit: BoxFit.contain,
+                  )
+                      : CachedNetworkImage(
+                    imageUrl: controller.getImageUrl(logo),
+                    width: 80,
+                    height: 80,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        width: 80,
+                        height: 80,
+                        decoration: const BoxDecoration(
+                          color: Colors.grey,
+                          shape: BoxShape.circle,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 20,),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          businessName,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          email,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.black87,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
+                    errorWidget: (context, url, error) => Image.asset(
+                      "assets/images/b_logo.png",
+                      width: 50,
+                      height: 60,
+                      fit: BoxFit.contain,
                     ),
-
+                  ),
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      businessName,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      email,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.black87,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ],
                 ),
               ),
-
-              const SizedBox(width: 16),
-
-
             ],
           ),
         ),

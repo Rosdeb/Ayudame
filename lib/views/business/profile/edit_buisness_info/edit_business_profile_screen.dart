@@ -102,7 +102,7 @@ class _EditBusinessProfileScreenState extends State<EditBusinessProfileScreen> {
                                         .coverPhoto!
                                         .startsWith('http'))
                               ? Image.network(
-                                  _viewModel.businessProfile.value!.coverPhoto!,
+                                  _viewModel.getImageUrl(_viewModel.businessProfile.value!.coverPhoto!),
                                   height: 160.h,
                                   width: double.infinity,
                                   fit: BoxFit.cover,
@@ -166,7 +166,7 @@ class _EditBusinessProfileScreenState extends State<EditBusinessProfileScreen> {
                                     _viewModel.businessProfile.value!.logo!
                                         .startsWith('http'))
                               ? Image.network(
-                                  _viewModel.businessProfile.value!.logo!,
+                                  _viewModel.getImageUrl(_viewModel.businessProfile.value!.logo!),
                                   height: 120.h,
                                   width: 120.h,
                                   fit: BoxFit.cover,

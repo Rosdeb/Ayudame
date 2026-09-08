@@ -73,7 +73,7 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
                       image: DecorationImage(
                         image:
                             business?.logo != null && business!.logo!.isNotEmpty
-                            ? NetworkImage(business.logo!)
+                            ? NetworkImage(_viewModel.getImageUrl(business.logo!))
                             : const AssetImage('assets/images/men.png')
                                   as ImageProvider,
                         fit: BoxFit.cover,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:middle_ware/views/business/profile/edit_buisness_info/edit_business_profile_screen.dart';
 import 'package:middle_ware/viewmodels/business_auth_viewmodel.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
@@ -15,6 +16,7 @@ class BusinessProfileViewPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xffF4F8F5),
       appBar: CustomAppBar(
+        //onBackTap: ,
         title: AppTranslations.translateValue("Business Profile"),
         actions: [
           IconButton(
@@ -41,19 +43,18 @@ class BusinessProfileViewPage extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(16),
-                child: cover != null && cover.startsWith('http')
-                    ? Image.network(
-                        cover,
+                child: cover != null && cover.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: controller.getImageUrl(cover),
                         height: 180,
                         width: double.infinity,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) =>
-                            Image.asset(
-                              'assets/images/b_cover.png',
-                              height: 180,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                            ),
+                        errorWidget: (context, url, error) => Image.asset(
+                          'assets/images/b_cover.png',
+                          height: 180,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
                       )
                     : Image.asset(
                         'assets/images/b_cover.png',
@@ -63,31 +64,30 @@ class BusinessProfileViewPage extends StatelessWidget {
                       ),
               ),
               const SizedBox(height: 20),
-              _infoField("Business name", businessName),
-              _infoField("Business category", category),
-              _infoField("Business location", location),
-              _infoField("About", about),
+              _infoField(AppTranslations.translateValue("Business name"), businessName),
+              _infoField(AppTranslations.translateValue("Business category"), category),
+              _infoField(AppTranslations.translateValue("Business location"), location),
+              _infoField(AppTranslations.translateValue("About"), about),
               const SizedBox(height: 20),
               Text(
                 AppTranslations.translateValue("Business photo"),
-                style: TextStyle(fontWeight: FontWeight.w600),
+                style: const TextStyle(fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 10),
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: logo != null && logo.startsWith('http')
-                    ? Image.network(
-                        logo,
+                child: logo != null && logo.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: controller.getImageUrl(logo),
                         height: 120,
                         width: 120,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) =>
-                            Image.asset(
-                              'assets/images/b_logo.png',
-                              height: 120,
-                              width: 120,
-                              fit: BoxFit.cover,
-                            ),
+                        errorWidget: (context, url, error) => Image.asset(
+                          'assets/images/b_logo.png',
+                          height: 120,
+                          width: 120,
+                          fit: BoxFit.cover,
+                        ),
                       )
                     : Image.asset(
                         'assets/images/b_logo.png',
@@ -97,8 +97,6 @@ class BusinessProfileViewPage extends StatelessWidget {
                       ),
               ),
               const SizedBox(height: 40),
-
-              const SizedBox(height: 20),
             ],
           ),
         );

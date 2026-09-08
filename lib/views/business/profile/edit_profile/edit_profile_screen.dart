@@ -133,11 +133,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       radius: 50.r,
                       backgroundImage: _selectedImage != null
                           ? FileImage(_selectedImage!) as ImageProvider
-                          : _viewModel.currentBusiness.value?.logo != null &&
-                                _viewModel.currentBusiness.value!.logo!
+                          : _viewModel.currentBusiness.value?.profilePicture != null &&
+                                _viewModel.currentBusiness.value!.profilePicture!
                                     .startsWith('http')
                           ? NetworkImage(
-                              _viewModel.currentBusiness.value!.logo!,
+                              _viewModel.getImageUrl(_viewModel.currentBusiness.value!.profilePicture!),
                             )
                           : const AssetImage('assets/images/profile.png')
                                 as ImageProvider,
