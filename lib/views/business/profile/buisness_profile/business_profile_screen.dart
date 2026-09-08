@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:middle_ware/views/business/profile/business_profile_card.dart';
+import 'package:middle_ware/views/business/profile/widgets/business_profile_card.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 import 'package:middle_ware/core/localization/app_translations.dart';
 

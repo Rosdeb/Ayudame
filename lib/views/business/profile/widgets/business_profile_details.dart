@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:middle_ware/views/business/profile/edit_business_profile_screen.dart';
+import 'package:middle_ware/views/business/profile/edit_buisness_info/edit_business_profile_screen.dart';
 import 'package:middle_ware/viewmodels/business_auth_viewmodel.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 import 'package:middle_ware/core/localization/app_translations.dart';

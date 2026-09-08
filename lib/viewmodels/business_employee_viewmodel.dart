@@ -348,7 +348,10 @@ class BusinessEmployeeViewModel extends GetxController {
   }
 
   /// Make Phone Call
-  Future<void> makePhoneCall(String id) async {
+  var isCalling = false.obs;
+
+  Future<void> makePhoneCall(String id,BuildContext context) async {
+    isCalling.value = true;
     try {
       final phone = await _service.getEmployeePhone(id);
       if (phone != null && phone.isNotEmpty) {
@@ -369,6 +372,8 @@ class BusinessEmployeeViewModel extends GetxController {
       }
     } catch (e) {
       Get.snackbar("Error", "Failed: $e");
+    } finally {
+      isCalling.value = false;
     }
   }
 

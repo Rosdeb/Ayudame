@@ -5,8 +5,8 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
-import '../../../../viewmodels/business_auth_viewmodel.dart';
-import '../../../widgets/custom_text_field.dart';
+import '../../../../../viewmodels/business_auth_viewmodel.dart';
+import '../../../../widgets/custom_text_field.dart';
 import 'package:middle_ware/core/localization/app_translations.dart';
 
 class EditProfileScreen extends StatefulWidget {

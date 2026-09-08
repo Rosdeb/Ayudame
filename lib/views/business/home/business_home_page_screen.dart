@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/views/business/employee/all_employee.dart';
 import '../../../core/app_icons.dart';
-import 'BusinessNotificationPage.dart';
+import 'business_notification_page.dart';
 import '../../../widgets/provider_ui_card.dart';
 import '../../../viewmodels/business_auth_viewmodel.dart';
 import '../../../viewmodels/business_employee_viewmodel.dart';

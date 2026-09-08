@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
-import 'package:middle_ware/views/business/Activities/cancelled.dart';
+import 'package:middle_ware/views/business/activities/cancelled.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 import '../../../viewmodels/business_auth_viewmodel.dart';
-import 'Bookings.dart';
+import 'bookings.dart';
 import 'complate.dart';
 import 'package:middle_ware/core/localization/app_translations.dart';
 

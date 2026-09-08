@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
-import '../../../viewmodels/business_auth_viewmodel.dart';
+import '../../../../viewmodels/business_auth_viewmodel.dart';
 import 'package:middle_ware/core/localization/app_translations.dart';
 
 class BusinessTermsConditionScreen extends StatefulWidget {

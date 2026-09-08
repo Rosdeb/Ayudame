@@ -7,7 +7,7 @@ import 'package:middle_ware/widgets/CustomDashedBorder.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 
 import '../../../viewmodels/BankController.dart';
-import 'Business_bank_information.dart';
+import 'business_bank_information.dart';
 import 'package:middle_ware/core/localization/app_translations.dart';
 
 class BankInformationScreen extends StatelessWidget {

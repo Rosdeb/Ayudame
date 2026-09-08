@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 
-import 'BusinessContactUsScreen.dart';
-import 'BusinessFaqScreen.dart';
+import 'business_contact_us_screen.dart';
+import '../faq/business_faq_screen.dart';
 import 'package:middle_ware/core/localization/app_translations.dart';
 
 class BusinessHelpSupportScreen extends StatelessWidget {

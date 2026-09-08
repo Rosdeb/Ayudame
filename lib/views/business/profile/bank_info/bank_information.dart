@@ -5,8 +5,8 @@ import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/widgets/CustomDashedBorder.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 
-import '../../../viewmodels/bank_payout_controller.dart';
-import 'Business_bank_information.dart';
+import '../../../../viewmodels/bank_payout_controller.dart';
+import 'business_bank_information.dart';
 import 'edit_bank_information.dart';
 import 'package:middle_ware/core/localization/app_translations.dart';
 

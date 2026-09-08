@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
@@ -123,7 +124,7 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
           GestureDetector(
             onTap: () {
               if (employee.id != null) {
-                _viewModel.makePhoneCall(employee.id!);
+                _viewModel.makePhoneCall(employee.id!,context);
               }
             },
             child: Container(
@@ -133,34 +134,41 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
                 border: Border.all(color: const Color(0xFF1B5E44), width: 1.5),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min, // Shrinks to fit content
-                children: [
-                  Text(
-                    AppTranslations.translateValue('Call now'),
-                    style: TextStyle(
-                      color: Color(0xFF1B5E44),
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      fontFamily: "Inter",
+              child: Obx(() {
+
+                return Row(
+                  mainAxisSize: MainAxisSize.min, // Shrinks to fit content
+                  children: [
+                    Text(
+                      AppTranslations.translateValue('Call now'),
+                      style: const TextStyle(
+                        color: Color(0xFF1B5E44),
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: "Inter",
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  // Icon container with solid background
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1B5E44),
-                      borderRadius: BorderRadius.circular(12),
+                    const SizedBox(width: 12),
+                    // Icon container with solid background
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1B5E44),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: _viewModel.isCalling.value
+                          ? const CupertinoActivityIndicator(
+                        color: Colors.white,
+                      )
+                         : const Icon(
+                        Icons.phone_outlined,
+                        color: Colors.white,
+                        size: 20,
+                      ),
                     ),
-                    child: const Icon(
-                      Icons.phone_outlined,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ),
-                ],
-              ),
+                  ],
+                );
+              }),
             ),
           ),
         ],
@@ -785,7 +793,7 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
         ),
-        padding: const EdgeInsets.symmetric(vertical: 80),
+        padding: const EdgeInsets.symmetric(vertical: 16,horizontal: 16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -799,7 +807,6 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
             ),
             const SizedBox(height: 20),
             SizedBox(
-              width: 300,
               height: 54,
               child: ListTile(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -807,7 +814,7 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
                 leading: SvgPicture.asset('assets/icons/edit.svg'),
                 title: Text(
                   AppTranslations.translateValue("Edit Employee"),
-                  style: const TextStyle(fontWeight: FontWeight.w500),
+                  style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
                 onTap: () {
                   Get.to(() => SaveEmployee(employee: employee));
@@ -817,11 +824,11 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
 
             const SizedBox(height: 20),
             SizedBox(
-              width: 300,
               height: 54,
               child: Obx(() => ListTile(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                tileColor: Colors.grey.shade300,
+                focusColor: Colors.black45,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),),
+                tileColor: Colors.black,
                 leading: SvgPicture.asset(
                   'assets/icons/block.svg',
                   colorFilter: const ColorFilter.mode(Colors.black87, BlendMode.srcIn),
@@ -845,7 +852,6 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
             ),
             const SizedBox(height: 20),
             SizedBox(
-              width: 300,
               height: 54,
               child: ListTile(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -858,7 +864,7 @@ class _EmployeeDetailsScreenState extends State<EmployeeDetailsScreen> {
                   AppTranslations.translateValue("Delete Employee"),
                   style: const TextStyle(
                     color: Colors.red,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 onTap: () {

@@ -5,7 +5,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
 import 'package:middle_ware/core/localization/app_translations.dart';
-import 'package:middle_ware/views/business/profile/business_profile_details.dart';
+import 'package:middle_ware/views/business/profile/widgets/business_profile_details.dart';
 import 'package:middle_ware/viewmodels/business_auth_viewmodel.dart';
 
 class BusinessProfileCard extends StatelessWidget {

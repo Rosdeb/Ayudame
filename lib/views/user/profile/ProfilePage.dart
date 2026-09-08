@@ -351,9 +351,7 @@ class ProfilePage extends StatelessWidget {
                           ),
                           settingsTile(
                             iconPath: "assets/icons/privacyIcon.svg",
-                            title: AppTranslations.translateValue(
-                              "profile.privacy_policy",
-                            ),
+                            title: AppTranslations.translateValue("profile.privacy_policy",),
                             onTap: () {
                               Get.to(() => PrivacyPolicyScreen());
                             },
@@ -361,9 +359,7 @@ class ProfilePage extends StatelessWidget {
                           SizedBox(height: 16.h),
                           settingsTile(
                             iconPath: "assets/icons/termsIcon.svg",
-                            title: AppTranslations.translateValue(
-                              "profile.terms_condition",
-                            ),
+                            title: AppTranslations.translateValue("profile.terms_condition",),
                             onTap: () {
                               Get.to(() => TermsConditionScreen());
                             },

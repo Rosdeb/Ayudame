@@ -5,10 +5,10 @@ import 'package:get/get.dart';
 
 import '../core/app_icons.dart';
 import '../core/theme/app_colors.dart';
-import '../views/business/Activities/ActivitiesPage.dart';
+import '../views/business/activities/activities_page.dart';
 import '../views/business/employee/all_employee.dart';
-import '../views/business/home/BusinessHomePageScreen.dart';
-import '../views/business/profile/BusinessProfile.dart';
+import '../views/business/home/business_home_page_screen.dart';
+import '../views/business/profile/business_profile.dart';
 import '../controller/business/bottom_nav_controller.dart';
 
 class BottomNavScreen extends StatelessWidget {
