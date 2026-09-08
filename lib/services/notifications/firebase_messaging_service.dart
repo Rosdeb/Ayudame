@@ -1,8 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:middle_ware/services/api_service.dart';
+import 'package:middle_ware/services/storage_service.dart';
 import 'package:middle_ware/utils/token_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:middle_ware/core/routes/app_routes.dart';
 import 'local_notifications_service.dart';
 
 
@@ -10,7 +14,6 @@ class FirebaseMessagingService {
   FirebaseMessagingService._internal();
 
   static final FirebaseMessagingService _instance = FirebaseMessagingService._internal();
-  final firebaseMessagingService = FirebaseMessagingService.instance();
 
 
   factory FirebaseMessagingService.instance() => _instance;
@@ -62,7 +65,7 @@ class FirebaseMessagingService {
       final authToken = await TokenService().getToken();
       if (authToken == null) return;
 
-      final url = Uri.parse("${ApiService.BASE_URL}/api/notifications/register-token");
+      final url = Uri.parse("${ApiService.BASE_URL}/api/notifications/token");
 
       final response = await http.post(
         url,
@@ -70,12 +73,41 @@ class FirebaseMessagingService {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $authToken',
         },
-        body: jsonEncode({'fcmToken': token}),
+        body: jsonEncode({
+          'token': token,
+          'platform': Platform.isIOS ? 'ios' : 'android'
+        }),
       );
 
-      print("Token Sync Status: ${response.statusCode}");
+      print("Token Sync Status: ${response.statusCode} - ${response.body}");
     } catch (e) {
       print("Error sending FCM token to server: $e");
+    }
+  }
+
+  /// Removes the device token on logout
+  Future<void> removeTokenOnLogout() async {
+    try {
+      final authToken = await TokenService().getToken();
+      if (authToken == null) return;
+
+      final token = await FirebaseMessaging.instance.getToken();
+      if (token == null) return;
+
+      final url = Uri.parse("${ApiService.BASE_URL}/api/notifications/token");
+
+      final response = await http.delete(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $authToken',
+        },
+        body: jsonEncode({'token': token}),
+      );
+
+      print("Token Remove Status: ${response.statusCode}");
+    } catch (e) {
+      print("Error removing FCM token: $e");
     }
   }
 
@@ -99,14 +131,64 @@ class FirebaseMessagingService {
     if (notificationData != null) {
       // Display a local notification using the service
       _localNotificationsService?.showNotification(
-          notificationData.title, notificationData.body, message.data.toString()
+          notificationData.title ?? '', notificationData.body ?? '', jsonEncode(message.data)
         );
     }
   }
 
   void _onMessageOpenedApp(RemoteMessage message) {
     print('Notification caused the app to open: ${message.data.toString()}');
-    // TODO: Add navigation or specific handling based on message data
+    _handleDeepLink(message.data);
+  }
+  
+  void _handleDeepLink(Map<String, dynamic> data) async {
+    try {
+      if (data.isEmpty) return;
+      
+      final type = data['type']?.toString();
+      final entityId = data['entityId']?.toString() ?? 
+                       data['bookingId']?.toString() ?? 
+                       data['appointmentId']?.toString() ?? 
+                       data['eventId']?.toString();
+      
+      final role = await StorageService.getUserRole();
+
+      // Determine route based on type
+      if (type != null) {
+        if (type.startsWith('booking') || type == 'business_owner_booking_payment' || type == 'booking_payment') {
+          // If we had a specific detail screen we would pass entityId:
+          // Get.toNamed(AppRoutes.userOrderDetails, arguments: {'id': entityId});
+          if (role == 'business') {
+            Get.toNamed(AppRoutes.businessOrders);
+          } else if (role == 'provider') {
+            Get.toNamed(AppRoutes.providerOrders);
+          } else {
+            Get.toNamed(AppRoutes.userBooking);
+          }
+        } else if (type.startsWith('appointment') || type == 'business_owner_appointment_payment' || type == 'appointment_payment') {
+          if (role == 'business') {
+            Get.toNamed(AppRoutes.businessOrders);
+          } else if (role == 'provider') {
+            Get.toNamed(AppRoutes.providerOrders);
+          } else {
+            Get.toNamed(AppRoutes.userAppointment);
+          }
+        } else if (type == 'event_ticket_sold') {
+          if (role == 'event_manager') {
+            Get.toNamed(AppRoutes.eventHome); // Navigate to event home or event orders
+          }
+        } else {
+          // General notifications
+          if (role == 'business') {
+            Get.toNamed(AppRoutes.notifications); // Business notification page
+          } else {
+            Get.toNamed(AppRoutes.userNotification); // User notification page
+          }
+        }
+      }
+    } catch (e) {
+      print("Deep link error: $e");
+    }
   }
 }
 

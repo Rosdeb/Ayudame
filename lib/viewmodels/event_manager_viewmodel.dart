@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../services/notifications/firebase_messaging_service.dart';
+
 import '../models/event_manager_model.dart';
 import '../services/event_manager_service.dart';
 import '../services/storage_service.dart';
@@ -340,6 +342,7 @@ class EventManagerViewModel extends GetxController {
   Future<void> logout() async {
     isLoading.value = true;
     try {
+      await FirebaseMessagingService.instance().removeTokenOnLogout();
       await _authService.logout();
       Get.snackbar(
         "common.success".tr,

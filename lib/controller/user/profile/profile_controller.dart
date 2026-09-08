@@ -1,5 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:get/get.dart';
+import '../../../services/notifications/firebase_messaging_service.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -95,6 +97,7 @@ class ProfileController extends GetxController {
   }
 
   Future<void> logout() async {
+    await FirebaseMessagingService.instance().removeTokenOnLogout();
     await TokenService().clearToken();
     await StorageService.clearAll();
     final prefs = await SharedPreferences.getInstance();

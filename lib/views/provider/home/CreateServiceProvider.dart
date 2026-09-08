@@ -166,7 +166,7 @@ class _ProviderCreateServicePageState extends State<ProviderCreateServicePage> {
       if (Get.isDialogOpen ?? false) {
         Get.back();
       }
-      Get.offAllNamed(AppRoutes.providerBottomNavScreen);
+      Get.back(result: true);
     });
 
     showDialog(
@@ -224,7 +224,7 @@ class _ProviderCreateServicePageState extends State<ProviderCreateServicePage> {
                   width: double.infinity,
                   child: TextButton(
                     onPressed: () {
-                      Get.offAllNamed(AppRoutes.providerBottomNavScreen);
+                      Get.back();
                       // Handle go home action
                     },
                     style: TextButton.styleFrom(
@@ -485,7 +485,7 @@ class _ProviderCreateServicePageState extends State<ProviderCreateServicePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: "Create Service", showBackButton: false),
+      appBar: CustomAppBar(title: "Create Service"),
       backgroundColor: AppColors.bgColor,
       body: Column(
         children: [

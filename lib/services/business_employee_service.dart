@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'storage_service.dart';
+
 import '../models/business_employee_model.dart';
 import 'api_service.dart';
 
@@ -282,48 +284,36 @@ class BusinessEmployeeService {
       }
 
       final files = <String, dynamic>{'servicePhoto': servicePhotoPath};
-
-      // Save service in service table endpoints (not employeeServices table).
-      final List<String> serviceTableEndpoints = <String>[
-        '/api/services',
-        '/api/business-owners/services',
-        '/api/providers/services',
-      ];
-
-      String? lastError;
-      for (final endpoint in serviceTableEndpoints) {
-        final streamedResponse = await ApiService.postMultipart(
-          endpoint: endpoint,
-          fields: fields,
-          files: files,
-          requireAuth: true,
-        );
-
-        final responseBody = await streamedResponse.stream.bytesToString();
-        if (streamedResponse.statusCode == 200 ||
-            streamedResponse.statusCode == 201) {
-          return await getEmployeeDetail(employeeId);
-        }
-
-        // Try next endpoint only for route-related failures.
-        if (streamedResponse.statusCode == 404 ||
-            streamedResponse.statusCode == 405) {
-          lastError =
-              'Endpoint not available ($endpoint): ${streamedResponse.statusCode}';
-          continue;
-        }
-
-        try {
-          final errorResponse =
-              jsonDecode(responseBody) as Map<String, dynamic>;
-          throw Exception(errorResponse['message'] ?? 'Failed to add service');
-        } catch (e) {
-          if (e.toString().contains('Exception:')) rethrow;
-          throw Exception('Failed to add service');
-        }
+      
+      final role = await StorageService.getUserRole();
+      String endpoint = '/api/services'; // fallback
+      
+      if (role == 'business') {
+        endpoint = '/api/business-owners/services';
+      } else if (role == 'provider') {
+        endpoint = '/api/providers/services';
       }
 
-      throw Exception(lastError ?? 'Failed to add service');
+      final streamedResponse = await ApiService.postMultipart(
+        endpoint: endpoint,
+        fields: fields,
+        files: files,
+        requireAuth: true,
+      );
+
+      final responseBody = await streamedResponse.stream.bytesToString();
+      if (streamedResponse.statusCode == 200 ||
+          streamedResponse.statusCode == 201) {
+        return await getEmployeeDetail(employeeId);
+      }
+
+      try {
+        final errorResponse = jsonDecode(responseBody) as Map<String, dynamic>;
+        throw Exception(errorResponse['message'] ?? 'Failed to add service');
+      } catch (e) {
+        if (e.toString().contains('Exception:')) rethrow;
+        throw Exception('Failed to add service. Status: ${streamedResponse.statusCode}');
+      }
     } catch (e) {
       debugPrint('Add Service To Employee Error: $e');
       rethrow;

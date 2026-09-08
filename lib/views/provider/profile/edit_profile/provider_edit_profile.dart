@@ -103,7 +103,8 @@ class _ProviderEditProfileScreenState extends State<ProviderEditProfileScreen> {
         // Update ProviderProfileController instantly
         final p = Get.find<ProviderProfileController>();
         p.fetchProviderProfile();
-        Get.off(() => ProviderProfilePage());
+        Get.back();
+        //Get.off(() => ProviderProfilePage());
       } else {
         FloatingErrorBar.show(context, message:  response["body"]["message"] ?? "Update failed",);
       }
@@ -118,6 +119,7 @@ class _ProviderEditProfileScreenState extends State<ProviderEditProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
+        showBackButton: true,
         title: AppTranslations.translateValue("Edit Profile"),
       ),
       body: SingleChildScrollView(

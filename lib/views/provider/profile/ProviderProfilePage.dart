@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../../services/notifications/firebase_messaging_service.dart';
+
 import 'package:get/get.dart';
 import 'package:middle_ware/core/app_icons.dart';
 import 'package:middle_ware/core/routes/app_routes.dart';
@@ -614,6 +616,7 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
                       child: ElevatedButton(
                         onPressed: () async {
                           // Clear session using StorageService.clearAll
+                          await FirebaseMessagingService.instance().removeTokenOnLogout();
                           await TokenService().clearToken();
                           await StorageService.clearAll();
 

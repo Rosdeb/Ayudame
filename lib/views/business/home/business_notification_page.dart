@@ -21,7 +21,10 @@ class BusinessNotificationController extends GetxController {
       isLoading.value = true;
       final response = await _service
           .getNotifications(); // defaults: page=1, limit=20
-      if (response['data'] != null) {
+      if (response['data'] != null && response['data']['notifications'] != null) {
+        notifications.assignAll(response['data']['notifications']);
+      } else if (response['data'] is List) {
+        // Fallback just in case
         notifications.assignAll(response['data']);
       }
     } catch (e) {
@@ -88,7 +91,7 @@ class BusinessNotificationPage extends StatelessWidget {
                         item['senderAvatar'] ??
                             'https://via.placeholder.com/50',
                         item['title'] ?? 'Notification',
-                        item['message'] ?? 'No detail provided',
+                        item['body'] ?? item['message'] ?? 'No detail provided',
                         controller.formatTime(item['createdAt']),
                       );
                     },

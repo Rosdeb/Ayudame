@@ -41,6 +41,15 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
     });
   }
 
+  Future<void> _handleRefresh() async {
+    await Future.wait([
+      _viewModel.getStats(),
+      _employeeViewModel.fetchAllEmployees(forceRefresh: true),
+      _bookingViewModel.fetchBookings(),
+      _appointmentViewModel.fetchAppointments(),
+    ]);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,7 +82,7 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
                       image: DecorationImage(
                         image:
                             business?.logo != null && business!.logo!.isNotEmpty
-                            ? NetworkImage(_viewModel.getImageUrl(business.logo!))
+                            ? NetworkImage(_viewModel.getImageUrl(business.profilePicture!))
                             : const AssetImage('assets/images/men.png')
                                   as ImageProvider,
                         fit: BoxFit.cover,
@@ -143,10 +152,17 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      body: RefreshIndicator(
+        onRefresh: _handleRefresh,
+        color: const Color(0xFF1C5941),
+        backgroundColor: Colors.white,
+        displacement: 40.0,
+        edgeOffset: 110.0,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
             // Stats Cards Section Background
             Container(
               width: double.infinity,
@@ -609,7 +625,8 @@ class _BusinessHomePageScreenState extends State<BusinessHomePageScreen> {
           ],
         ),
       ),
-    );
+    )
+   );
   }
 
   Future<void> _showRescheduleDialog(String appointmentId) async {

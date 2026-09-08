@@ -30,79 +30,92 @@ class BusinessEmployeeListScreen extends StatelessWidget {
 
         child: Column(
           children: [
-            // 🔹 Create Employee Button (Dashed)
-            InkWell(
-              onTap: () async {
-                await Get.to(() => const CreateEmployee());
-                _viewModel.fetchAllEmployees(
-                  forceRefresh: true,
-                ); // Force refresh after return
-              },
-              child: CustomPaint(
-                painter: DashedBorderPainter(
-                  color: const Color(0xFF1E5631),
-                  strokeWidth: 1.5,
-                  dashWidth: 6,
-                  dashSpace: 4,
-                  borderRadius: 12,
-                ),
-                child: Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 14.h),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        AppTranslations.translateValue("Create an employee"),
-                        style: TextStyle(
-                          color: Color(0xFF1E5631),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
+            Row(
+              children: [
+                // 🔹 Create Employee Button
+                Expanded(
+                  child: InkWell(
+                    onTap: () async {
+                      await Get.to(() => const CreateEmployee());
+                      _viewModel.fetchAllEmployees(
+                        forceRefresh: true,
+                      ); // Force refresh after return
+                    },
+                    child: CustomPaint(
+                      painter: DashedBorderPainter(
+                        color: const Color(0xFF1E5631),
+                        strokeWidth: 1.5,
+                        dashWidth: 6,
+                        dashSpace: 4,
+                        borderRadius: 12,
+                      ),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 14.h),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                AppTranslations.translateValue("Create Employee"),
+                                style: TextStyle(
+                                  color: Color(0xFF1E5631),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14.sp,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            SizedBox(width: 4.w),
+                            Icon(Icons.add, color: Color(0xFF1E5631), size: 18.sp),
+                          ],
                         ),
                       ),
-                      SizedBox(width: 8),
-                      Icon(Icons.add, color: Color(0xFF1E5631)),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ),
-            SizedBox(height: 10),
-            InkWell(
-              onTap: () async {
-                await Get.to(() => const ProviderCreateServicePage());
-                _viewModel.fetchAllEmployees(
-                  forceRefresh: true,
-                ); // Force refresh after return
-              },
-              child: CustomPaint(
-                painter: DashedBorderPainter(
-                  color: const Color(0xFF1E5631),
-                  strokeWidth: 1.5,
-                  dashWidth: 6,
-                  dashSpace: 4,
-                  borderRadius: 12,
-                ),
-                child: Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 14.h),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        AppTranslations.translateValue("Create an Service"),
-                        style: TextStyle(
-                          color: Color(0xFF1E5631),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
+                SizedBox(width: 10.w),
+                // 🔹 Create Service Button
+                Expanded(
+                  child: InkWell(
+                    onTap: () async {
+                      await Get.to(() => const ProviderCreateServicePage());
+                      _viewModel.fetchAllEmployees(
+                        forceRefresh: true,
+                      ); // Force refresh after return
+                    },
+                    child: CustomPaint(
+                      painter: DashedBorderPainter(
+                        color: const Color(0xFF1E5631),
+                        strokeWidth: 1.5,
+                        dashWidth: 6,
+                        dashSpace: 4,
+                        borderRadius: 12,
+                      ),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 14.h),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                AppTranslations.translateValue("Create Service"),
+                                style: TextStyle(
+                                  color: Color(0xFF1E5631),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14.sp,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            SizedBox(width: 4.w),
+                            Icon(Icons.add, color: Color(0xFF1E5631), size: 18.sp),
+                          ],
                         ),
                       ),
-                      SizedBox(width: 8),
-                      Icon(Icons.add, color: Color(0xFF1E5631)),
-                    ],
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
             SizedBox(height: 16.h),
 

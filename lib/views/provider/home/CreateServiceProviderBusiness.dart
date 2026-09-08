@@ -370,7 +370,7 @@ class _ProviderCreateServicePageState extends State<ProviderCreateServicePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: "Create Service", showBackButton: false),
+      appBar: CustomAppBar(title: "Create Service"),
       backgroundColor: AppColors.bgColor,
       body: Column(
         children: [

@@ -5,6 +5,7 @@ import '../services/business_auth_service.dart';
 import '../services/storage_service.dart';
 import '../core/routes/app_routes.dart';
 import '../utils/token_service.dart';
+import '../services/notifications/firebase_messaging_service.dart';
 
 class BusinessAuthViewModel extends GetxController {
   // Controllers for Login
@@ -532,6 +533,7 @@ class BusinessAuthViewModel extends GetxController {
   /// Sign Out
   Future<void> signOut() async {
     try {
+      await FirebaseMessagingService.instance().removeTokenOnLogout();
       await StorageService.clearAll();
       currentBusiness.value = null;
       isLoggedIn.value = false;
