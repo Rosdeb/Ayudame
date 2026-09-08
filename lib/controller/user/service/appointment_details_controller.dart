@@ -1,4 +1,7 @@
 import 'dart:convert';
+import '../../../views/components/floatingbar.dart';
+import '../orders/loading_helper.dart';
+
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import '../../../models/user/orders/order_model.dart';
@@ -62,12 +65,13 @@ class AppointmentDetailsController extends GetxController {
       Get.snackbar('Error', 'Something went wrong');
     } finally {
       isLoading(false);
+      hideActionLoadingDialog();
     }
   }
 
   Future<void> payAppointment(String id) async {
     try {
-      isLoading(true);
+      showActionLoadingDialog();
 
       final token = await TokenService().getToken();
       if (token == null || token.isEmpty) {
@@ -132,6 +136,7 @@ class AppointmentDetailsController extends GetxController {
       Get.snackbar('Error', 'Unable to process payment right now');
     } finally {
       isLoading(false);
+      hideActionLoadingDialog();
     }
   }
 

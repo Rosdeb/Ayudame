@@ -46,6 +46,7 @@ class StripePaymentService {
     _isTestMode = data['isTestMode'] != false;
 
     Stripe.publishableKey = publishableKey;
+    Stripe.merchantIdentifier = (data['merchantIdentifier'] ?? 'merchant.com.ayudame').toString();
     await Stripe.instance.applySettings();
     _isConfigured = true;
   }

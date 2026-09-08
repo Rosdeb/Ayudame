@@ -37,115 +37,114 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF3F7F5),
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return const Center(
-            child: CircularProgressIndicator(color: Color(0xFF1E523F)),
-          );
-        }
-
-        final order = controller.booking.value;
-        if (order == null) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+      body: Column(
+        children: [
+          // Custom Curved Header
+          Container(
+            height: 120,
+            padding: const EdgeInsets.only(top: 40, left: 16, right: 16),
+            decoration: const BoxDecoration(
+              color: Color(0xFF1E523F),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30),
+              ),
+            ),
+            child: Row(
               children: [
-                Text(
-                  AppTranslations.translateValue("Booking details not found"),
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
+                IconButton(
+                  icon: const Icon(
+                      Icons.arrow_back_ios, color: Colors.white, size: 20),
                   onPressed: () => Get.back(),
-                  child: Text(AppTranslations.translateValue("Go Back")),
                 ),
+                Expanded(
+                  child: Text(
+                    AppTranslations.translateValue("Booking details"),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const SizedBox(width: 40),
               ],
             ),
-          );
-        }
+          ),
+          Expanded(
+            child: Obx(() {
+              if (controller.isLoading.value) {
+                return const Center(
+                  child: CircularProgressIndicator(color: Color(0xFF1E523F)),
+                );
+              }
 
-        final String status = (order.overallStatus).toLowerCase();
-        final String normalizedStatus = status
-            .replaceAll('-', '_')
-            .replaceAll(' ', '_');
-        final String paymentStatus = (order.paymentStatus ?? '').toLowerCase();
-        final String paymentIntentStatus = (order.paymentIntentStatus ?? '')
-            .toLowerCase();
-        final bool hasPaymentIntent =
-            (order.paymentIntentId ?? '').trim().isNotEmpty ||
-            paymentIntentStatus.isNotEmpty;
-        final bool isPaymentCompleted =
-            paymentStatus == 'completed' ||
-            paymentStatus == 'offline_paid' ||
-            paymentStatus == 'refunded';
-        final bool canPayDue = paymentStatus == 'due_requested';
-        final bool downPaymentSettled =
-            paymentStatus == 'authorized' ||
-            (paymentStatus == 'partial' &&
-                (paymentIntentStatus == 'succeeded' ||
-                    paymentIntentStatus == 'requires_capture' ||
-                    paymentIntentStatus == 'processing'));
-        final bool waitingForProvider =
-            !hasPaymentIntent &&
-            !isPaymentCompleted &&
-            !canPayDue &&
-            normalizedStatus != 'cancelled' &&
-            normalizedStatus != 'rejected';
-        final bool waitingForDueRequest =
-            downPaymentSettled &&
-            !canPayDue &&
-            !isPaymentCompleted &&
-            normalizedStatus != 'cancelled' &&
-            normalizedStatus != 'rejected';
-        final bool showSplitPayment =
-            paymentStatus == 'pending' ||
-            paymentStatus == 'authorized' ||
-            paymentStatus == 'partial' ||
-            paymentStatus == 'due_requested';
-        final num downPaymentAmount = order.downPayment ?? 0;
-        final num dueAmount = order.remainingAmount ?? 0;
-        final num totalAmount = order.totalAmount ?? 0;
-
-        return Column(
-          children: [
-            // Custom Curved Header
-            Container(
-              height: 120,
-              padding: const EdgeInsets.only(top: 40, left: 16, right: 16),
-              decoration: const BoxDecoration(
-                color: Color(0xFF1E523F),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30),
-                ),
-              ),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                    onPressed: () => Get.back(),
-                  ),
-                  Expanded(
-                    child: Text(
-                      AppTranslations.translateValue("Booking details"),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+              final order = controller.booking.value;
+              if (order == null) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        AppTranslations.translateValue(
+                            "Booking details not found"),
                       ),
-                    ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () => Get.back(),
+                        child: Text(AppTranslations.translateValue("Go Back")),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 40),
-                ],
-              ),
-            ),
+                );
+              }
 
-            Expanded(
-              child: SingleChildScrollView(
+              final String status = (order.overallStatus).toLowerCase();
+              final String normalizedStatus = status
+                  .replaceAll('-', '_')
+                  .replaceAll(' ', '_');
+              final String paymentStatus = (order.paymentStatus ?? '')
+                  .toLowerCase();
+              final String paymentIntentStatus = (order.paymentIntentStatus ??
+                  '')
+                  .toLowerCase();
+              final bool hasPaymentIntent =
+                  (order.paymentIntentId ?? '')
+                      .trim()
+                      .isNotEmpty ||
+                      paymentIntentStatus.isNotEmpty;
+              final bool isPaymentCompleted =
+                  paymentStatus == 'completed' ||
+                      paymentStatus == 'offline_paid' ||
+                      paymentStatus == 'refunded';
+              final bool canPayDue = paymentStatus == 'due_requested';
+              final bool downPaymentSettled =
+                  paymentStatus == 'authorized' ||
+                      (paymentStatus == 'partial' &&
+                          (paymentIntentStatus == 'succeeded' ||
+                              paymentIntentStatus == 'requires_capture' ||
+                              paymentIntentStatus == 'processing'));
+              final bool waitingForProvider =
+                  !hasPaymentIntent &&
+                      !isPaymentCompleted &&
+                      !canPayDue &&
+                      normalizedStatus != 'cancelled' &&
+                      normalizedStatus != 'rejected';
+              final bool waitingForDueRequest =
+                  downPaymentSettled &&
+                      !canPayDue &&
+                      !isPaymentCompleted &&
+                      normalizedStatus != 'cancelled' &&
+                      normalizedStatus != 'rejected';
+              final bool showSplitPayment =
+                  paymentStatus == 'pending' ||
+                      paymentStatus == 'authorized' ||
+                      paymentStatus == 'partial' ||
+                      paymentStatus == 'due_requested';
+              final num downPaymentAmount = order.downPayment ?? 0;
+              final num dueAmount = order.remainingAmount ?? 0;
+              final num totalAmount = order.totalAmount ?? 0;
+
+              return SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
                 child: Container(
                   padding: const EdgeInsets.all(16),
@@ -170,23 +169,23 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                             radius: 28,
                             backgroundColor: Colors.grey[200],
                             backgroundImage:
-                                (order.provider?.user?.profilePicture != null &&
-                                    order
-                                        .provider!
-                                        .user!
-                                        .profilePicture!
-                                        .isNotEmpty)
+                            (order.provider?.user?.profilePicture != null &&
+                                order
+                                    .provider!
+                                    .user!
+                                    .profilePicture!
+                                    .isNotEmpty)
                                 ? NetworkImage(
-                                    order.provider!.user!.profilePicture!,
-                                  )
+                              order.provider!.user!.profilePicture!,
+                            )
                                 : null,
                             child:
-                                (order.provider?.user?.profilePicture == null ||
-                                    order
-                                        .provider!
-                                        .user!
-                                        .profilePicture!
-                                        .isEmpty)
+                            (order.provider?.user?.profilePicture == null ||
+                                order
+                                    .provider!
+                                    .user!
+                                    .profilePicture!
+                                    .isEmpty)
                                 ? const Icon(Icons.person, color: Colors.grey)
                                 : null,
                           ),
@@ -221,7 +220,8 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                "Date: ${order.bookingDate?.split('T')[0] ?? ''}",
+                                "Date: ${order.bookingDate?.split('T')[0] ??
+                                    ''}",
                                 style: TextStyle(
                                   fontSize: 11,
                                   color: Colors.grey.shade600,
@@ -325,15 +325,13 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                       if (waitingForProvider) ...[
                         const SizedBox(height: 14),
                         _buildInfoBox(
-                          message:
-                              "Payment will be available after provider accepts your booking.",
+                          message: "Payment will be available after provider accepts your booking.",
                         ),
                       ],
                       if (waitingForDueRequest) ...[
                         const SizedBox(height: 14),
                         _buildInfoBox(
-                          message:
-                              "Down payment received. Due payment will be enabled after provider request.",
+                          message: "Down payment received. Due payment will be enabled after provider request.",
                         ),
                       ],
                       const SizedBox(height: 32),
@@ -343,11 +341,11 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
                     ],
                   ),
                 ),
-              ),
-            ),
-          ],
-        );
-      }),
+              );
+            }),
+          ),
+        ],
+      ),
     );
   }
 
@@ -361,24 +359,26 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
     final String paymentIntentStatus = (order.paymentIntentStatus ?? '')
         .toLowerCase();
     final bool hasPaymentIntent =
-        (order.paymentIntentId ?? '').trim().isNotEmpty ||
-        paymentIntentStatus.isNotEmpty;
+        (order.paymentIntentId ?? '')
+            .trim()
+            .isNotEmpty ||
+            paymentIntentStatus.isNotEmpty;
     final bool canPayDue = paymentStatus == 'due_requested';
     final bool isPaymentCompleted =
         paymentStatus == 'completed' ||
-        paymentStatus == 'offline_paid' ||
-        paymentStatus == 'refunded';
+            paymentStatus == 'offline_paid' ||
+            paymentStatus == 'refunded';
     final bool downPaymentSettled =
         paymentStatus == 'authorized' ||
-        (paymentStatus == 'partial' &&
-            (paymentIntentStatus == 'succeeded' ||
-                paymentIntentStatus == 'requires_capture' ||
-                paymentIntentStatus == 'processing'));
+            (paymentStatus == 'partial' &&
+                (paymentIntentStatus == 'succeeded' ||
+                    paymentIntentStatus == 'requires_capture' ||
+                    paymentIntentStatus == 'processing'));
     final bool canPayDown =
         !isPaymentCompleted &&
-        !canPayDue &&
-        hasPaymentIntent &&
-        !downPaymentSettled;
+            !canPayDue &&
+            hasPaymentIntent &&
+            !downPaymentSettled;
     final bool canPayNow = canPayDue || canPayDown;
     final bool isClosedStatus =
         normalizedStatus == 'cancelled' || normalizedStatus == 'rejected';
@@ -386,10 +386,12 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
         canPayNow && bookingId.isNotEmpty && !isClosedStatus;
     final bool canCancel =
         normalizedStatus == 'pending' ||
-        normalizedStatus == 'accepted' ||
-        normalizedStatus == 'confirmed' ||
-        normalizedStatus == 'in_progress';
-    final bool hasReviewed = (order.reviewedAt ?? '').trim().isNotEmpty;
+            normalizedStatus == 'accepted' ||
+            normalizedStatus == 'confirmed' ||
+            normalizedStatus == 'in_progress';
+    final bool hasReviewed = (order.reviewedAt ?? '')
+        .trim()
+        .isNotEmpty;
     final bool canReview = normalizedStatus == 'completed' && !hasReviewed;
     String paymentButtonLabel = 'Payment Unavailable';
 
@@ -590,7 +592,10 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
     if (normalized.isEmpty) return 'Pending';
     return normalized
         .split(' ')
-        .where((word) => word.trim().isNotEmpty)
+        .where((word) =>
+    word
+        .trim()
+        .isNotEmpty)
         .map((word) => '${word[0].toUpperCase()}${word.substring(1)}')
         .join(' ');
   }

@@ -1,6 +1,9 @@
+import '../../../views/components/floatingbar.dart';
+import 'loading_helper.dart';
+
+
 import 'dart:convert';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import '../../../models/user/orders/order_model.dart';
 import '../../../utils/token_service.dart';
 import 'package:middle_ware/services/api_service.dart';
@@ -19,12 +22,6 @@ class BookingDetailsController extends GetxController {
     }
   }
 
-  void _logApiResponse(String method, Uri uri, http.Response response) {
-    print(
-      "[BookingDetails][API][RES] $method $uri -> ${response.statusCode}",
-    );
-    print("[BookingDetails][API][RES_BODY] ${response.body}");
-  }
 
   Future<void> fetchBookingDetails(
     String id, {
@@ -37,19 +34,7 @@ class BookingDetailsController extends GetxController {
       final token = await TokenService().getToken();
       if (token == null) return;
 
-      final uri = Uri.parse(
-        "${ApiService.BASE_URL}${_bookingBasePath(_activeSource.value)}/$id",
-      );
-      _logApiRequest('GET', uri);
-
-      final response = await http.get(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
-      _logApiResponse('GET', uri, response);
+      final response = await ApiService.get(endpoint: '${_bookingBasePath(_activeSource.value)}/$id', requireAuth: true);
 
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
@@ -75,33 +60,22 @@ class BookingDetailsController extends GetxController {
       Get.snackbar('Error', 'Something went wrong');
     } finally {
       isLoading(false);
+      hideActionLoadingDialog();
     }
   }
 
   Future<void> cancelBooking(String id) async {
     try {
-      isLoading(true);
+      showActionLoadingDialog();
 
       final token = await TokenService().getToken();
       if (token == null) return;
 
-      final uri = Uri.parse(
-        "${ApiService.BASE_URL}${_bookingBasePath(_activeSource.value)}/$id/cancel",
-      );
-      _logApiRequest('PATCH', uri);
-
-      final response = await http.patch(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
-      _logApiResponse('PATCH', uri, response);
+      final response = await ApiService.patch(endpoint: '${_bookingBasePath(_activeSource.value)}/$id/cancel', requireAuth: true, body: {});
 
       if (response.statusCode == 200) {
         // Refresh details to update UI status
-        fetchBookingDetails(id, source: _activeSource.value);
+        await fetchBookingDetails(id, source: _activeSource.value);
       } else {
         final body = jsonDecode(response.body);
         Get.snackbar(
@@ -116,12 +90,13 @@ class BookingDetailsController extends GetxController {
       Get.snackbar('Error', 'Something went wrong');
     } finally {
       isLoading(false);
+      hideActionLoadingDialog();
     }
   }
 
   Future<void> payDue(String id) async {
     try {
-      isLoading(true);
+      showActionLoadingDialog();
 
       final token = await TokenService().getToken();
       if (token == null || token.isEmpty) {
@@ -129,18 +104,7 @@ class BookingDetailsController extends GetxController {
         return;
       }
 
-      final statusUri = Uri.parse(
-        "${ApiService.BASE_URL}${_bookingBasePath(_activeSource.value)}/$id/payment-status",
-      );
-      _logApiRequest('GET', statusUri);
-      final statusRes = await http.get(
-        statusUri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
-      _logApiResponse('GET', statusUri, statusRes);
+      final statusRes = await ApiService.get(endpoint: '${_bookingBasePath(_activeSource.value)}/$id/payment-status', requireAuth: true);
 
       if (statusRes.statusCode != 200) {
         final msg = _extractMessage(
@@ -202,14 +166,10 @@ class BookingDetailsController extends GetxController {
       await _payDownPayment(id, token, _activeSource.value);
     } catch (e) {
       print("Error processing payment: $e");
-      Get.snackbar(
-        'Payment Error',
-        _humanizeError(e, fallback: 'Unable to process payment right now'),
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      if (Get.context != null) { FloatingErrorBar.show(Get.context!, message: "Payment failed"); }
     } finally {
       isLoading(false);
+      hideActionLoadingDialog();
     }
   }
 
@@ -218,18 +178,7 @@ class BookingDetailsController extends GetxController {
     String token,
     String source,
   ) async {
-    final checkoutUri = Uri.parse(
-      "${ApiService.BASE_URL}${_bookingBasePath(source)}/$bookingId/checkout-session",
-    );
-    _logApiRequest('GET', checkoutUri);
-    final response = await http.get(
-      checkoutUri,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-    );
-    _logApiResponse('GET', checkoutUri, response);
+    final response = await ApiService.get(endpoint: '${_bookingBasePath(source)}/$bookingId/checkout-session', requireAuth: true);
 
     if (response.statusCode != 200) {
       final msg = _extractMessage(
@@ -286,12 +235,7 @@ class BookingDetailsController extends GetxController {
         merchantDisplayName: 'Ayudame',
       );
     } catch (e) {
-      Get.snackbar(
-        'Payment Error',
-        _humanizeError(e, fallback: 'Unable to start Stripe payment'),
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      if (Get.context != null) { FloatingErrorBar.show(Get.context!, message: "Payment failed"); }
       return;
     }
 
@@ -307,18 +251,7 @@ class BookingDetailsController extends GetxController {
     String token,
     String source,
   ) async {
-    final dueIntentUri = Uri.parse(
-      "${ApiService.BASE_URL}${_bookingBasePath(source)}/$bookingId/due/intent",
-    );
-    _logApiRequest('GET', dueIntentUri);
-    final intentRes = await http.get(
-      dueIntentUri,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-    );
-    _logApiResponse('GET', dueIntentUri, intentRes);
+    final intentRes = await ApiService.get(endpoint: '${_bookingBasePath(source)}/$bookingId/due/intent', requireAuth: true);
 
     if (intentRes.statusCode != 200) {
       final msg = _extractMessage(
@@ -369,12 +302,7 @@ class BookingDetailsController extends GetxController {
         merchantDisplayName: 'Ayudame',
       );
     } catch (e) {
-      Get.snackbar(
-        'Payment Error',
-        _humanizeError(e, fallback: 'Unable to start Stripe payment'),
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      if (Get.context != null) { FloatingErrorBar.show(Get.context!, message: "Payment failed"); }
       return;
     }
 
@@ -391,18 +319,7 @@ class BookingDetailsController extends GetxController {
     String token,
     String source,
   ) async {
-    final dueConfirmUri = Uri.parse(
-      "${ApiService.BASE_URL}${_bookingBasePath(source)}/$bookingId/due/confirm",
-    );
-    _logApiRequest('POST', dueConfirmUri);
-    final confirmRes = await http.post(
-      dueConfirmUri,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-    );
-    _logApiResponse('POST', dueConfirmUri, confirmRes);
+    final confirmRes = await ApiService.post(endpoint: '${_bookingBasePath(source)}/$bookingId/due/confirm', requireAuth: true, body: {});
 
     if (confirmRes.statusCode == 200) {
       await fetchBookingDetails(bookingId, source: source);
@@ -496,9 +413,9 @@ class BookingDetailsController extends GetxController {
     return message;
   }
 
-  Future<void> submitReview(String id, int rating, String comment) async {
+  Future<void> submitReview(String bookingId, int rating, String comment) async {
     try {
-      isLoading(true);
+      showActionLoadingDialog();
       final currentBooking = booking.value;
       final String bookingStatus = (currentBooking?.bookingStatus ?? '')
           .toString()
@@ -540,25 +457,11 @@ class BookingDetailsController extends GetxController {
       final token = await TokenService().getToken();
       if (token == null) return;
 
-      final uri = Uri.parse(
-        "${ApiService.BASE_URL}${_bookingBasePath(_activeSource.value)}/$id/review",
-      );
-      final reqBody = jsonEncode({"rating": rating, "comment": trimmedComment});
-      _logApiRequest('POST', uri, body: reqBody);
-
-      final response = await http.post(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: reqBody,
-      );
-      _logApiResponse('POST', uri, response);
+      final response = await ApiService.post(endpoint: '${_bookingBasePath(_activeSource.value)}/$bookingId/review', requireAuth: true, body: {"rating": rating, "comment": trimmedComment});
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         Get.back(); // Close dialog
-        fetchBookingDetails(id, source: _activeSource.value); // Refresh
+        fetchBookingDetails(bookingId, source: _activeSource.value); // Refresh
       } else {
         final body = jsonDecode(response.body);
         Get.snackbar(
@@ -573,6 +476,7 @@ class BookingDetailsController extends GetxController {
       Get.snackbar('Error', 'Something went wrong');
     } finally {
       isLoading(false);
+      hideActionLoadingDialog();
     }
   }
 

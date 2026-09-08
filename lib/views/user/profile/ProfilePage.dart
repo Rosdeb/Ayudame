@@ -16,7 +16,7 @@ import 'package:shimmer/shimmer.dart';
 import '../../../controller/user/profile/profile_controller.dart';
 import '../../../core/routes/app_routes.dart';
 import '../../../core/theme/app_colors.dart';
-import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
+// import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import '../../../services/firebasenotification/firebasenotification.dart';
 import '../../../services/storage_service.dart';
 import 'PrivacyPolicyScreen.dart';
@@ -28,7 +28,7 @@ import 'package:middle_ware/core/localization/app_translations.dart';
 class ProfilePage extends StatelessWidget {
   ProfilePage({Key? key}) : super(key: key);
 
-  final _controller = ValueNotifier<bool>(false);
+  // final _controller = ValueNotifier<bool>(false);
   final ProfileController profileController = Get.put(ProfileController());
 
   @override
@@ -229,44 +229,45 @@ class ProfilePage extends StatelessWidget {
                           ),
                           SizedBox(height: 16.h),
 
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Image.asset(
-                                    "assets/icons/people.png",
-                                    width: 24,
-                                    height: 24,
-                                    color: Color(0xFF4d4d4d),
-                                  ),
-                                  SizedBox(width: 8.w),
-                                  Text(
-                                    AppTranslations.translateValue(
-                                      "Switch to provider",
-                                    ),
-                                    style: TextStyle(
-                                      fontFamily: 'Montserrat-Regular',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: Color(0xFF4d4d4d),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              AdvancedSwitch(
-                                activeColor: AppColors.mainAppColor,
-                                inactiveColor: Color(
-                                  0xFF787880,
-                                ).withOpacity(0.16),
-                                width: 48.w,
-                                height: 25.h,
-                                controller: _controller,
-                                borderRadius: BorderRadius.circular(77),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 16.h),
+                          // Provider switching is not implemented yet.
+//                           Row(
+//                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                             children: [
+//                               Row(
+//                                 children: [
+//                                   Image.asset(
+//                                     "assets/icons/people.png",
+//                                     width: 24,
+//                                     height: 24,
+//                                     color: Color(0xFF4d4d4d),
+//                                   ),
+//                                   SizedBox(width: 8.w),
+//                                   Text(
+//                                     AppTranslations.translateValue(
+//                                       "Switch to provider",
+//                                     ),
+//                                     style: TextStyle(
+//                                       fontFamily: 'Montserrat-Regular',
+//                                       fontSize: 14,
+//                                       fontWeight: FontWeight.w500,
+//                                       color: Color(0xFF4d4d4d),
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                               AdvancedSwitch(
+//                                 activeColor: AppColors.mainAppColor,
+//                                 inactiveColor: Color(
+//                                   0xFF787880,
+//                                 ).withOpacity(0.16),
+//                                 width: 48.w,
+//                                 height: 25.h,
+//                                 controller: _controller,
+//                                 borderRadius: BorderRadius.circular(77),
+//                               ),
+//                             ],
+//                           ),
+//                           SizedBox(height: 16.h),
                           settingsTile(
                             iconPath: "assets/icons/wishlistIcon.svg",
                             title: AppTranslations.translateValue("Favorites"),

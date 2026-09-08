@@ -38,12 +38,43 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF3F7F5),
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return const Center(
-            child: CircularProgressIndicator(color: Color(0xFF1E523F)),
-          );
-        }
+      body: Column(
+        children: [
+          // Custom Curved Header
+          Container(
+            height: 120,
+            padding: const EdgeInsets.only(top: 40, left: 16, right: 16),
+            decoration: const BoxDecoration(
+              color: Color(0xFF1E523F),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30),
+              ),
+            ),
+            child: Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 20),
+                  onPressed: () => Get.back(),
+                ),
+                Expanded(
+                  child: Text(
+                    AppTranslations.translateValue("Appointment details"),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const SizedBox(width: 40),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Obx(() {
+              if (controller.isLoading.value) {
+                return const Center(
+                  child: CircularProgressIndicator(color: Color(0xFF1E523F)),
+                );
+              }
 
         final order = controller.appointment.value;
         if (order == null) {
@@ -98,47 +129,7 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
             !paymentDone &&
             !isClosedStatus;
 
-        return Column(
-          children: [
-            // Custom Curved Header
-            Container(
-              height: 120,
-              padding: const EdgeInsets.only(top: 40, left: 16, right: 16),
-              decoration: const BoxDecoration(
-                color: Color(0xFF1E523F),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30),
-                ),
-              ),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back_ios,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                    onPressed: () => Get.back(),
-                  ),
-                  Expanded(
-                    child: Text(
-                      AppTranslations.translateValue("Appointment details"),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 40),
-                ],
-              ),
-            ),
-
-            Expanded(
-              child: SingleChildScrollView(
+        return SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
                 child: Container(
                   padding: const EdgeInsets.all(16),
@@ -457,11 +448,11 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
                     ],
                   ),
                 ),
-              ),
-            ),
-          ],
-        );
-      }),
+            );
+          }),
+          ),
+        ],
+      ),
     );
   }
 
