@@ -62,12 +62,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       final data = json.decode(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Get.snackbar(
-          t('common.success'),
-          data["message"] ?? t('auth.account_created'),
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
 
         Get.offNamed(
           AppRoutes.oTPVerificationForSignup,

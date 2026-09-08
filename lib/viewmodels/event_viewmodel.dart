@@ -57,12 +57,6 @@ class EventViewModel extends GetxController {
     try {
       isLoading.value = true;
       final response = await _eventService.createEvent(fields, imagePath);
-      Get.snackbar(
-        'Success',
-        response['message']?.toString() ?? 'Event created successfully',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
       onSuccess();
     } catch (e) {
       final errorMsg = e.toString().replaceAll('Exception: ', '');
@@ -156,12 +150,6 @@ class EventViewModel extends GetxController {
     try {
       isLoading.value = true;
       await _eventService.updateEvent(eventId, fields, imagePath);
-      Get.snackbar(
-        'Success',
-        'Event updated successfully',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
       if (onSuccess != null) {
         onSuccess();
       } else {
@@ -178,12 +166,6 @@ class EventViewModel extends GetxController {
     try {
       isLoading.value = true;
       await _eventService.publishEvent(eventId);
-      Get.snackbar(
-        'Success',
-        'Event published successfully',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
 
       if (selectedEvent.value?.id == eventId) {
         selectedEvent.value?.status = 'published';
@@ -213,12 +195,6 @@ class EventViewModel extends GetxController {
     try {
       isLoading.value = true;
       await _eventService.cancelEvent(eventId, reason);
-      Get.snackbar(
-        'Success',
-        'Event cancelled',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
 
       if (selectedEvent.value?.id == eventId) {
         selectedEvent.value?.status = 'cancelled';

@@ -299,7 +299,6 @@ class OrderProviderController extends GetxController {
           (body?['success'] != false);
 
       if (requestOk) {
-        Get.snackbar('Success', _extractMessage(body, fallbackSuccess));
         await fetchBookings();
         return true;
       }
@@ -343,7 +342,6 @@ class OrderProviderController extends GetxController {
           (decodedBody?['success'] != false);
 
       if (requestOk) {
-        Get.snackbar('Success', _extractMessage(decodedBody, fallbackSuccess));
         await fetchAppointments();
         return true;
       }

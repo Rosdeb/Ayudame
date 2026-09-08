@@ -59,7 +59,6 @@ class NotificationController extends GetxController {
       if (response.statusCode == 200) {
         // Success, remove from list
         notificationList.removeWhere((notification) => notification.id == id);
-        Get.snackbar("Success", "Notification deleted successfully");
         fetchNotifications(); // Refresh list to be sure
       } else {
         Get.snackbar("Error", "Failed to delete notification");

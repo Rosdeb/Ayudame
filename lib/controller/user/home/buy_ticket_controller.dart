@@ -64,7 +64,6 @@ class BuyTicketController extends GetxController {
           );
 
           if (paid) {
-            Get.snackbar("Success", "Ticket payment completed");
             final TicketPurchaseDetail? detail =
                 await _fetchTicketPurchaseDetail(
                   purchaseId: model.data!.purchaseId,

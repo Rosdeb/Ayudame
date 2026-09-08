@@ -33,14 +33,6 @@ class BusinessAppointmentViewModel extends GetxController {
       final error = await _service.acceptAppointment(id);
 
       if (error == null) {
-        Get.snackbar(
-          "Success",
-          "Appointment accepted successfully",
-          backgroundColor: const Color(0xFF4CAF50),
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM,
-          duration: const Duration(seconds: 2),
-        );
 
         // Refresh list to sync with backend
         await fetchAppointments();
@@ -77,14 +69,6 @@ class BusinessAppointmentViewModel extends GetxController {
       final error = await _service.rejectAppointment(id);
 
       if (error == null) {
-        Get.snackbar(
-          "Success",
-          "Appointment declined successfully",
-          backgroundColor: const Color(0xFF4CAF50),
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM,
-          duration: const Duration(seconds: 2),
-        );
 
         // Remove the appointment from local list immediately for better UX
         appointmentList.removeWhere((appointment) => appointment.id == id);
@@ -128,14 +112,6 @@ class BusinessAppointmentViewModel extends GetxController {
       final error = await _service.rescheduleAppointment(id, date, time);
 
       if (error == null) {
-        Get.snackbar(
-          "Success",
-          "Appointment rescheduled successfully",
-          backgroundColor: const Color(0xFF4CAF50),
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM,
-          duration: const Duration(seconds: 2),
-        );
 
         await fetchAppointments();
         return true;

@@ -61,12 +61,6 @@ class BookingController extends GetxController {
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
-        Get.snackbar(
-          'Success',
-          'Booking created successfully!',
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
         return responseData;
       } else {
         final errorBody = jsonDecode(response.body);

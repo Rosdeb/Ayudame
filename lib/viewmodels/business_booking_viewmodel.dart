@@ -97,14 +97,6 @@ class BusinessBookingViewModel extends GetxController {
       final error = await action();
 
       if (error == null) {
-        Get.snackbar(
-          "Success",
-          successMessage,
-          backgroundColor: const Color(0xFF4CAF50),
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM,
-          duration: const Duration(seconds: 2),
-        );
 
         await Future.wait([fetchBookings(), fetchBookingDetails(id)]);
         return true;

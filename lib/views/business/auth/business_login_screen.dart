@@ -197,14 +197,13 @@ class _BusinessLoginScreenState extends State<BusinessLoginScreen> {
 
                 const SizedBox(height: 24),
 
-                Obx(
-                  () => SizedBox(
+                Obx(() => SizedBox(
                     width: double.infinity,
                     height: 52,
                     child: ElevatedButton(
                       onPressed: _authViewModel.isLoading.value
                           ? null
-                          : () => _authViewModel.login(),
+                          : () => _authViewModel.login(context),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF1C5941),
                         foregroundColor: Colors.white,

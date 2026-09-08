@@ -458,12 +458,6 @@ class _ProviderCreateServicePageState extends State<ProviderCreateServicePage> {
       final data = json.decode(responseBody);
 
       if (streamed.statusCode == 200 || streamed.statusCode == 201) {
-        Get.snackbar(
-          "Success",
-          data["message"] ?? "Service created successfully!",
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
         _showSuccessDialog(_makeAppointment);
       } else {
         Get.snackbar(

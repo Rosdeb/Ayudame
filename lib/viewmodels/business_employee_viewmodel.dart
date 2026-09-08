@@ -87,14 +87,6 @@ class BusinessEmployeeViewModel extends GetxController {
       if (closeOnSuccess) {
         Get.back(); // Close screen
       }
-      if (showSuccessSnackbar) {
-        Get.snackbar(
-          "Success",
-          "Employee created successfully",
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
-      }
       return true;
     } catch (e) {
       Get.snackbar(
@@ -127,14 +119,6 @@ class BusinessEmployeeViewModel extends GetxController {
       await fetchAllEmployees(forceRefresh: true);
       if (closeOnSuccess) {
         Get.back();
-      }
-      if (showSuccessSnackbar) {
-        Get.snackbar(
-          "Success",
-          "Employee created successfully",
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
       }
       return true;
     } catch (e) {
@@ -174,14 +158,6 @@ class BusinessEmployeeViewModel extends GetxController {
       }
       if (closeOnSuccess) {
         Get.back(); // Close screen
-      }
-      if (showSuccessSnackbar) {
-        Get.snackbar(
-          "Success",
-          "Employee updated successfully",
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
       }
       return true;
     } catch (e) {
@@ -238,14 +214,6 @@ class BusinessEmployeeViewModel extends GetxController {
       if (closeOnSuccess) {
         Get.back();
       }
-      if (showSuccessSnackbar) {
-        Get.snackbar(
-          "Success",
-          "Service assigned to employee successfully",
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
-      }
       return true;
     } catch (e) {
       Get.snackbar(
@@ -268,12 +236,6 @@ class BusinessEmployeeViewModel extends GetxController {
       await _service.deleteEmployee(id);
       employeeList.removeWhere((e) => e.id == id);
       Get.back(); // If in detail screen
-      Get.snackbar(
-        "Success",
-        "Employee removed successfully",
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
     } catch (e) {
       Get.snackbar(
         "Error",
@@ -385,12 +347,6 @@ class BusinessEmployeeViewModel extends GetxController {
         await fetchAllEmployees(forceRefresh: true);
         // Also fetch detail to update current view if needed
         // await fetchEmployeeDetail(id);
-        Get.snackbar(
-          "Success",
-          "Employee status updated successfully",
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
         return true;
       } else {
         Get.snackbar("Error", "Failed to update status");

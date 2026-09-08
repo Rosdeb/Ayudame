@@ -123,7 +123,6 @@ class AppointmentDetailsController extends GetxController {
       );
 
       if (paid) {
-        Get.snackbar('Success', 'Appointment payment completed');
         await fetchAppointmentDetails(id, source: _activeSource.value);
       } else {
         Get.snackbar('Cancelled', 'Payment was cancelled');

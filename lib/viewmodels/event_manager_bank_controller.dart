@@ -203,11 +203,6 @@ class EventManagerBankController extends GetxController {
       }
 
       Get.back();
-      Get.snackbar(
-        t('common.success'),
-        t('Bank information saved successfully'),
-        snackPosition: SnackPosition.BOTTOM,
-      );
     } catch (_) {
       Get.snackbar(
         t('common.error'),

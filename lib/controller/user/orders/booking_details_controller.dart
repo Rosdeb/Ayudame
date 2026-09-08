@@ -100,12 +100,6 @@ class BookingDetailsController extends GetxController {
       _logApiResponse('PATCH', uri, response);
 
       if (response.statusCode == 200) {
-        Get.snackbar(
-          'Success',
-          'Booking cancelled successfully',
-          backgroundColor: const Color(0xFF1E523F),
-          colorText: Colors.white,
-        );
         // Refresh details to update UI status
         fetchBookingDetails(id, source: _activeSource.value);
       } else {
@@ -302,7 +296,6 @@ class BookingDetailsController extends GetxController {
     }
 
     if (paid) {
-      Get.snackbar('Success', 'Down payment completed');
       await fetchBookingDetails(bookingId, source: source);
     } else {
       Get.snackbar('Cancelled', 'Payment was cancelled');
@@ -412,7 +405,6 @@ class BookingDetailsController extends GetxController {
     _logApiResponse('POST', dueConfirmUri, confirmRes);
 
     if (confirmRes.statusCode == 200) {
-      Get.snackbar('Success', 'Due payment completed');
       await fetchBookingDetails(bookingId, source: source);
       return;
     }
@@ -566,12 +558,6 @@ class BookingDetailsController extends GetxController {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         Get.back(); // Close dialog
-        Get.snackbar(
-          'Success',
-          'Review submitted successfully',
-          backgroundColor: const Color(0xFF1E523F),
-          colorText: Colors.white,
-        );
         fetchBookingDetails(id, source: _activeSource.value); // Refresh
       } else {
         final body = jsonDecode(response.body);

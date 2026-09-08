@@ -67,13 +67,6 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
             data['data']?['token'] ??
             data['token'];
 
-        Get.snackbar(
-          "Success",
-          data["message"] ?? "OTP Verified successfully!",
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
-
         Get.offNamed(
           AppRoutes.userNewPasswordScreen,
           arguments: {"resetToken": resetToken, "email": email},

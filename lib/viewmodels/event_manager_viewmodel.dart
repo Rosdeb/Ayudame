@@ -44,13 +44,6 @@ class EventManagerViewModel extends GetxController {
       final response = await _authService.sendOtp(email);
       forgotPasswordEmail.value = email;
 
-      Get.snackbar(
-        "common.success".tr,
-        response['message'] ?? "auth.verification_code_sent".tr,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
-
       Get.toNamed(AppRoutes.eventOtp);
     } catch (e) {
       Get.snackbar(
@@ -81,13 +74,6 @@ class EventManagerViewModel extends GetxController {
       final response = await _authService.verifyRegistrationOtp(
         email: tempRegistrationEmail.value,
         otp: otp,
-      );
-
-      Get.snackbar(
-        "common.success".tr,
-        response['message'] ?? "auth.account_created".tr,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
       );
 
       // Navigate to Login as requested
@@ -123,13 +109,6 @@ class EventManagerViewModel extends GetxController {
         otp,
       );
       recoveryOtp.value = otp;
-
-      Get.snackbar(
-        "common.success".tr,
-        response['message'] ?? "auth.otp_verified".tr,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
 
       // Navigate to Reset Password Screen (Assuming we create this route)
       // We will need to create this route and screen
@@ -175,13 +154,6 @@ class EventManagerViewModel extends GetxController {
         otp: recoveryOtp.value,
         newPassword: newPassword,
         confirmPassword: confirmPassword,
-      );
-
-      Get.snackbar(
-        "common.success".tr,
-        response['message'] ?? "auth.password_updated".tr,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
       );
 
       Get.offAllNamed(AppRoutes.eventLogin);
@@ -241,14 +213,6 @@ class EventManagerViewModel extends GetxController {
 
       // Store email for verification
       tempRegistrationEmail.value = email;
-
-      Get.snackbar(
-        "common.success".tr,
-        response['message'] ?? "auth.account_created".tr,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
 
       // Navigate to OTP verification instead of login
       Get.toNamed(AppRoutes.eventOtp, arguments: {'isRegistration': true});
@@ -314,14 +278,6 @@ class EventManagerViewModel extends GetxController {
 
         isLoggedIn.value = true;
 
-        Get.snackbar(
-          "common.success".tr,
-          response['message'] ?? "auth.login_success".tr,
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
-
         // Navigate to event manager home
         Get.offNamed(AppRoutes.eventHome);
       }
@@ -344,13 +300,6 @@ class EventManagerViewModel extends GetxController {
     try {
       await FirebaseMessagingService.instance().removeTokenOnLogout();
       await _authService.logout();
-      Get.snackbar(
-        "common.success".tr,
-        "profile.logout_success".tr,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
     } catch (e) {
       Get.snackbar(
         "common.error".tr,
@@ -456,13 +405,6 @@ class EventManagerViewModel extends GetxController {
         identificationNumber: identificationNumber,
       );
 
-      Get.snackbar(
-        "common.success".tr,
-        response['message'] ?? "Profile updated successfully",
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
-
       // Refresh profile
       await fetchProfile();
 
@@ -498,13 +440,6 @@ class EventManagerViewModel extends GetxController {
     isLoading.value = true;
     try {
       final response = await _authService.deleteAccount();
-
-      Get.snackbar(
-        "common.success".tr,
-        response['message'] ?? "Account deleted successfully",
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
 
       // Clear local data and redirect
       await StorageService.clearAll();

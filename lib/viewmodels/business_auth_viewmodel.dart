@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:middle_ware/views/components/floatingbar.dart';
 import '../models/business_model.dart';
 import '../services/business_auth_service.dart';
 import '../services/storage_service.dart';
@@ -124,15 +125,17 @@ class BusinessAuthViewModel extends GetxController {
   }
 
   /// Business Login
-  Future<void> login() async {
+  Future<void> login(BuildContext context) async {
     if (emailController.text.isEmpty || passwordController.text.isEmpty) {
-      Get.snackbar(
-        "common.error".tr,
-        "auth.enter_email_and_password".tr,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+
+      FloatingErrorBar.show(context, message: "auth.enter_email_and_password".tr);
+      // Get.snackbar(
+      //   "common.error".tr,
+      //   "auth.enter_email_and_password".tr,
+      //   snackPosition: SnackPosition.BOTTOM,
+      //   backgroundColor: Colors.red,
+      //   colorText: Colors.white,
+      // );
       return;
     }
 
@@ -187,13 +190,7 @@ class BusinessAuthViewModel extends GetxController {
         Get.offAllNamed(AppRoutes.businessHome);
       } else {
         debugPrint(" Login failed: ${response.message}");
-        Get.snackbar(
-          "common.error".tr,
-          response.message,
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
+        FloatingErrorBar.show(context, message:   "common.error".tr,);
       }
     } catch (e) {
       debugPrint(" Login Exception: $e");
@@ -329,14 +326,6 @@ class BusinessAuthViewModel extends GetxController {
 
       final response = await _authService.sendOtp(email: email, phone: phone);
 
-      Get.snackbar(
-        "common.success".tr,
-        response['message'] ?? "auth.verification_code_sent".tr,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
-
       // Navigate to verification screen
       Get.toNamed(AppRoutes.businessOtp);
     } catch (e) {
@@ -423,14 +412,6 @@ class BusinessAuthViewModel extends GetxController {
         otp: verificationCodeController.text.trim(),
       );
 
-      Get.snackbar(
-        "common.success".tr,
-        response['message'] ?? "auth.otp_verified".tr,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
-
       Get.toNamed(AppRoutes.businessResetPassword);
     } catch (e) {
       Get.snackbar(
@@ -489,14 +470,6 @@ class BusinessAuthViewModel extends GetxController {
         otp: verificationCodeController.text.trim(),
         newPassword: newPasswordController.text,
         confirmPassword: confirmNewPasswordController.text,
-      );
-
-      Get.snackbar(
-        "common.success".tr,
-        response['message'] ?? "auth.password_updated".tr,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
       );
 
       // Navigate back to login
@@ -659,14 +632,6 @@ class BusinessAuthViewModel extends GetxController {
       await getBusinessInfo();
       imageVersion.value = DateTime.now().millisecondsSinceEpoch;
 
-      Get.snackbar(
-        "common.success".tr,
-        response['message'] ?? "Business profile updated successfully",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
-
       Get.back(); // Go back from edit screen
     } catch (e) {
       _handleError(e, prefix: "Business Profile Update ViewModel Error");
@@ -758,14 +723,6 @@ class BusinessAuthViewModel extends GetxController {
         confirmPassword: confirmPassword,
       );
 
-      Get.snackbar(
-        "common.success".tr,
-        response['message'] ?? "auth.password_updated".tr,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
-
       // Clear password fields logic could be here but controllers are local to edit screen usually
     } catch (e) {
       debugPrint("❌ Change Password ViewModel Error: $e");
@@ -794,14 +751,6 @@ class BusinessAuthViewModel extends GetxController {
 
       // Navigate to login
       Get.offAllNamed(AppRoutes.businessLogin);
-
-      Get.snackbar(
-        "common.success".tr,
-        response['message'] ?? "common.success".tr,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
     } catch (e) {
       debugPrint("❌ Delete Account ViewModel Error: $e");
       Get.snackbar(

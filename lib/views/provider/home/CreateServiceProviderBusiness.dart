@@ -343,12 +343,6 @@ class _ProviderCreateServicePageState extends State<ProviderCreateServicePage> {
       );
 
       if (!mounted) return;
-      Get.snackbar(
-        AppTranslations.translateValue("Success"),
-        AppTranslations.translateValue("Service assigned successfully"),
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
       Get.back(result: true);
     } catch (e) {
       if (!mounted) return;
