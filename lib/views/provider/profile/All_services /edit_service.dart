@@ -4,10 +4,9 @@ import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
+import 'package:middle_ware/views/components/floatingbar.dart';
 import 'package:middle_ware/widgets/CustomDashedBorder.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 import 'package:middle_ware/widgets/custom_loading_button.dart';
@@ -103,16 +102,8 @@ class _EditServicePageState extends State<EditServicePage> {
     });
 
     try {
-      await TokenService().init();
-      final token = await TokenService().getToken();
-      final headers = <String, String>{'Content-Type': 'application/json'};
-      if (token != null && token.isNotEmpty) {
-        headers['Authorization'] = 'Bearer $token';
-      }
-
-      final response = await http.get(
-        Uri.parse("${ApiService.BASE_URL}/api/categories"),
-        headers: headers,
+      final response = await ApiService.get(
+        endpoint: '/api/categories',
       );
 
       if (response.statusCode == 200) {
@@ -183,7 +174,7 @@ class _EditServicePageState extends State<EditServicePage> {
 
   Future<bool> _hasInternetConnection() async {
     final connectivityResult = await Connectivity().checkConnectivity();
-    return connectivityResult != ConnectivityResult.none;
+    return !connectivityResult.contains(ConnectivityResult.none);
   }
 
   Future<void> _updateService() async {
@@ -298,69 +289,51 @@ class _EditServicePageState extends State<EditServicePage> {
     });
 
     try {
-      final request = http.MultipartRequest(
-        'PUT',
-        Uri.parse("${ApiService.BASE_URL}/api/providers/services/$_serviceId"),
-      );
-      request.headers['Authorization'] = 'Bearer $token';
-
-      request.fields['category'] = body['category'] ?? '';
-      request.fields['headline'] = body['headline'] ?? '';
-      request.fields['description'] = body['description'] ?? '';
-      request.fields['whyChooseUs'] = jsonEncode(body['whyChooseUs']);
-      request.fields['appointmentEnabled'] = body['appointmentEnabled']
-          .toString();
-      request.fields['basePrice'] = body['basePrice'].toString();
+      final Map<String, String> fieldsData = {
+        'category': body['category'] ?? '',
+        'headline': body['headline'] ?? '',
+        'description': body['description'] ?? '',
+        'whyChooseUs': jsonEncode(body['whyChooseUs']),
+        'appointmentEnabled': body['appointmentEnabled'].toString(),
+        'basePrice': body['basePrice'].toString(),
+        'isActive': 'true', // Added as requested
+      };
 
       if (body.containsKey('appointmentSlots')) {
-        request.fields['appointmentSlots'] = jsonEncode(
-          body['appointmentSlots'],
-        );
+        fieldsData['appointmentSlots'] = jsonEncode(body['appointmentSlots']);
       }
 
+      final Map<String, dynamic> filesData = {};
       if (_image != null) {
-        final imagePath = _image!.path;
-        final ext = imagePath.split('.').last.toLowerCase();
-        final subtype = ext == 'png'
-            ? 'png'
-            : ext == 'webp'
-            ? 'webp'
-            : 'jpeg';
-
-        request.files.add(
-          await http.MultipartFile.fromPath(
-            'servicePhoto',
-            imagePath,
-            filename: 'service_photo.$subtype',
-            contentType: MediaType('image', subtype),
-          ),
-        );
+        filesData['servicePhoto'] = _image!.path;
       }
 
-      final streamed = await request.send();
-      final responseBody = await streamed.stream.bytesToString();
+      final response = await ApiService.postMultipart(
+        endpoint: '/api/providers/services/$_serviceId',
+        method: "PUT",
+        fields: fieldsData,
+        files: filesData,
+        requireAuth: true,
+      );
+
+      final responseBody = await response.stream.bytesToString();
       final data = json.decode(responseBody);
 
-      if (streamed.statusCode == 200 || streamed.statusCode == 201) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         // Navigate back first
         Get.back();
 
         // Show success snackbar after navigation
-        Get.snackbar(
-          'Success',
-          data['message'] ?? 'Service updated successfully!',
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM,
-          duration: const Duration(seconds: 3),
-        );
+        // Get.snackbar(
+        //   'Success',
+        //   data['message'] ?? 'Service updated successfully!',
+        //   backgroundColor: Colors.green,
+        //   colorText: Colors.white,
+        //   snackPosition: SnackPosition.BOTTOM,
+        //   duration: const Duration(seconds: 3),
+        // );
       } else {
-        Get.snackbar(
-          'Error',
-          data['message'] ?? 'Failed to update service',
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
+        FloatingErrorBar.show(context, message:  data['message'] ?? 'Failed to update service',);
       }
     } catch (e) {
       Get.snackbar('Error', 'Something went wrong: $e');
@@ -507,12 +480,13 @@ class _EditServicePageState extends State<EditServicePage> {
                       ),
                       const SizedBox(height: 10),
                       Container(
+                        padding: EdgeInsets.all(2),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
                             color: const Color(0xFF2D6A4F),
-                            width: 1.5,
+                            width: 2,
                           ),
                         ),
                         child: DropdownButtonFormField<String>(

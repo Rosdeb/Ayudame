@@ -20,14 +20,14 @@ class ProviderTermsConditionScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                AppTranslations.translateValue('legal.terms_title'),
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
+              // Text(
+              //   AppTranslations.translateValue('legal.terms_title'),
+              //   style: const TextStyle(
+              //     fontSize: 20,
+              //     fontWeight: FontWeight.bold,
+              //     color: Colors.black87,
+              //   ),
+              // ),
               const SizedBox(height: 16),
               Text(
                 AppTranslations.translateValue('legal.terms_welcome_title'),

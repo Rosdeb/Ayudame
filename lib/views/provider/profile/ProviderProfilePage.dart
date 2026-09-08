@@ -4,14 +4,14 @@ import 'package:get/get.dart';
 import 'package:middle_ware/core/app_icons.dart';
 import 'package:middle_ware/core/routes/app_routes.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
-import 'package:middle_ware/views/provider/profile/ProviderHelpSupportScreen.dart';
-import 'package:middle_ware/views/provider/profile/ProviderNotificationPage.dart';
+import 'package:middle_ware/views/provider/profile/help_support/ProviderHelpSupportScreen.dart';
+import 'package:middle_ware/views/provider/profile/notification/ProviderNotificationPage.dart';
 import 'package:middle_ware/views/provider/profile/portfolio/PortfolioListScreen.dart';
-import 'package:middle_ware/views/provider/profile/ProviderPrivacyPolicyScreen.dart';
-import 'package:middle_ware/views/provider/profile/ProviderTermsConditionScreen.dart';
-import 'package:middle_ware/views/provider/profile/all_services_page.dart';
+import 'package:middle_ware/views/provider/profile/privacy%20/ProviderPrivacyPolicyScreen.dart';
+import 'package:middle_ware/views/provider/profile/terms/ProviderTermsConditionScreen.dart';
+import 'package:middle_ware/views/provider/profile/All_services%20/all_services_page.dart';
 import 'package:middle_ware/views/provider/profile/provider_bank_information.dart';
-import 'package:middle_ware/views/provider/profile/provider_edit_profile.dart';
+import 'package:middle_ware/views/provider/profile/edit_profile/provider_edit_profile.dart';
 import 'package:middle_ware/views/provider/profile/provider_payment.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -40,6 +40,7 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
+        showBackButton: false,
         title: AppTranslations.translateValue("Profile"),
         onBackTap: () => Get.offAllNamed(AppRoutes.providerBottomNavScreen),
       ),
@@ -160,20 +161,13 @@ class _ProviderProfilePageState extends State<ProviderProfilePage> {
                                 ],
                               ),
                             ),
-
-                            // Arrow / Action
-                            const Icon(
-                              Icons.chevron_right_rounded,
-                              color: Colors.grey,
-                            ),
                           ],
                         ),
                     );
                   }),
 
                   const SizedBox(height: 10,),
-                  Obx(
-                    () => Padding(
+                  Obx(() => Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Row(
                         children: [

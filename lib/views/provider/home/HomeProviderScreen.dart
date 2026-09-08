@@ -4,7 +4,8 @@ import 'package:get/get.dart';
 import 'package:middle_ware/core/app_icons.dart';
 import 'package:middle_ware/core/routes/app_routes.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
-import 'package:middle_ware/views/provider/profile/ProviderNotificationPage.dart';
+import 'package:middle_ware/views/provider/profile/notification/ProviderNotificationPage.dart';
+import 'package:path/path.dart';
 import '../../../models/provider/provider_appointment_model.dart';
 import '../../../models/provider/provider_booking_model.dart';
 import '../orders/OrderProvider.dart';
@@ -12,15 +13,11 @@ import 'package:intl/intl.dart';
 import '../../../controller/provider/profile/provider_profile_controller.dart';
 import '../../../controller/provider/home_provider_controller.dart';
 import 'package:middle_ware/core/localization/app_translations.dart';
+import '../../../controller/provider/bottom_nav_controller.dart';
 
-class HomeProviderScreen extends StatefulWidget {
-  const HomeProviderScreen({Key? key}) : super(key: key);
+class HomeProviderScreen extends StatelessWidget {
+  HomeProviderScreen({super.key});
 
-  @override
-  State<HomeProviderScreen> createState() => _HomeProviderScreenState();
-}
-
-class _HomeProviderScreenState extends State<HomeProviderScreen> {
   final HomeProviderController controller = Get.put(HomeProviderController());
   final ProviderProfileController profileController = Get.put(
     ProviderProfileController(),
@@ -178,10 +175,11 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                         ),
                       ),
                       GestureDetector(
-                        onTap: () => Get.offAllNamed(
-                          AppRoutes.providerBottomNavScreen,
-                          arguments: 2,
-                        ),
+                        onTap: () {
+                          if (Get.isRegistered<ProviderBottomNavController>()) {
+                            Get.find<ProviderBottomNavController>().changeTabIndex(2);
+                          }
+                        },
                         child: Text(
                           AppTranslations.translateValue('common.view_all'),
                           style: TextStyle(
@@ -218,12 +216,12 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
                         if (item is ProviderBooking) {
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 12),
-                            child: _buildBookingCard(item: item),
+                            child: _buildBookingCard(context: context, item: item),
                           );
                         } else if (item is ProviderAppointment) {
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 12),
-                            child: _buildAppointmentCard(item: item),
+                            child: _buildAppointmentCard(context: context, item: item),
                           );
                         }
                         return const SizedBox.shrink();
@@ -278,7 +276,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
     );
   }
 
-  Widget _buildAppointmentCard({required ProviderAppointment item}) {
+  Widget _buildAppointmentCard({required BuildContext context, required ProviderAppointment item}) {
     String status = item.appointmentStatus?.toLowerCase() ?? 'pending';
     String dateStr = item.appointmentDate ?? '';
     try {
@@ -319,16 +317,17 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
               ],
             ),
             const SizedBox(height: 16),
-            _buildCardButtons(status, appointmentEnabled: true),
+            _buildCardButtons(context, status, appointmentEnabled: true),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildBookingCard({required ProviderBooking item}) {
+  Widget _buildBookingCard({required BuildContext context, required ProviderBooking item}) {
     String status = item.bookingStatus?.toLowerCase() ?? 'pending';
     String dateStr = item.bookingDate ?? '';
+
     try {
       if (dateStr.isNotEmpty) {
         dateStr = DateFormat('dd MMMM, yyyy').format(DateTime.parse(dateStr));
@@ -371,6 +370,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
             ),
             const SizedBox(height: 16),
             _buildCardButtons(
+              context,
               status,
               appointmentEnabled: false,
               bookingId: item.id,
@@ -513,6 +513,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
   }
 
   Widget _buildCardButtons(
+    BuildContext context,
     String status, {
     bool appointmentEnabled = false,
     String? bookingId,
@@ -676,7 +677,7 @@ class _HomeProviderScreenState extends State<HomeProviderScreen> {
           ),
           TextButton(
             onPressed: () => _showConfirmationDialog(
-              context,
+              context as BuildContext,
               AppTranslations.translateValue(
                 "provider_home.cancel_order_action",
               ),

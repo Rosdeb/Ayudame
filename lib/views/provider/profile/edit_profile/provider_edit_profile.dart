@@ -8,16 +8,16 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:middle_ware/views/components/floatingbar.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 import 'package:shimmer/shimmer.dart';
-import '../../../controller/provider/profile/edit_profile_controller.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../utils/token_service.dart';
-import '../../../widgets/custom_text_field.dart';
-import '../../../controller/provider/profile/provider_profile_controller.dart';
+import '../../../../controller/provider/profile/edit_profile_controller.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../utils/token_service.dart';
+import '../../../../widgets/custom_text_field.dart';
+import '../../../../controller/provider/profile/provider_profile_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../../widgets/user_custom_text_field.dart';
-import 'ProviderProfilePage.dart';
-import 'ProviderProfileScreen.dart';
+import '../../../../widgets/user_custom_text_field.dart';
+import '../ProviderProfilePage.dart';
+import '../ProviderProfileScreen.dart';
 import 'package:middle_ware/core/localization/app_translations.dart';
 
 class ProviderEditProfileScreen extends StatefulWidget {

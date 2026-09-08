@@ -199,6 +199,21 @@ class ApiService {
     }
   }
 
+  static Future<http.StreamedResponse> putMultipart({
+    required String endpoint,
+    required Map<String, String> fields,
+    required Map<String, dynamic> files,
+    bool requireAuth = true,
+  }) async {
+    return postMultipart(
+      endpoint: endpoint,
+      fields: fields,
+      files: files,
+      requireAuth: requireAuth,
+      method: 'PUT',
+    );
+  }
+
   static Future<http.StreamedResponse> postMultipart({
     required String endpoint,
     required Map<String, String> fields,

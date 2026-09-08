@@ -38,11 +38,8 @@ class _OrderHistoryProviderScreenState
     return Scaffold(
       backgroundColor: AppColors.bgColor,
       appBar: CustomAppBar(
+        showBackButton: false,
         title: AppTranslations.translateValue("Order History"),
-        onBackTap: () => Get.offAllNamed(
-          AppRoutes.providerBottomNavScreen,
-          arguments: 0,
-        ),
       ),
       body: Column(
         children: [

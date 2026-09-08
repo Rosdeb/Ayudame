@@ -16,14 +16,23 @@ class AddPortfolioScreen extends StatefulWidget {
 class _AddPortfolioScreenState extends State<AddPortfolioScreen> {
   final PortfolioController controller = Get.find<PortfolioController>();
 
-  File? beforeImage;
-  File? afterImage;
+  final Rx<File?> beforeImage = Rx<File?>(null);
+  final Rx<File?> afterImage = Rx<File?>(null);
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _serviceTypeController = TextEditingController();
   final TextEditingController _aboutController = TextEditingController();
+  final RxInt currentLength = 0.obs;
 
   final int maxLength = 1000;
+
+  @override
+  void initState() {
+    super.initState();
+    _aboutController.addListener(() {
+      currentLength.value = _aboutController.text.length;
+    });
+  }
 
   @override
   void dispose() {
@@ -38,20 +47,17 @@ class _AddPortfolioScreenState extends State<AddPortfolioScreen> {
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
     if (image != null) {
-      setState(() {
-        if (isBefore) {
-          beforeImage = File(image.path);
-        } else {
-          afterImage = File(image.path);
-        }
-      });
+      if (isBefore) {
+        beforeImage.value = File(image.path);
+      } else {
+        afterImage.value = File(image.path);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     Color primaryGreen = const Color(0xFF2C5F4F);
-    int currentLength = _aboutController.text.length;
 
     return Scaffold(
       appBar: CustomAppBar(
@@ -121,9 +127,9 @@ class _AddPortfolioScreenState extends State<AddPortfolioScreen> {
                     // Images
                     Row(
                       children: [
-                        _buildUploadBox("Before work", beforeImage, true),
+                        _buildUploadBox("Before work", beforeImage.value, true),
                         const SizedBox(width: 6),
-                        _buildUploadBox("After work", afterImage, false),
+                        _buildUploadBox("After work", afterImage.value, false),
                       ],
                     ),
                     const SizedBox(height: 24),
@@ -141,7 +147,6 @@ class _AddPortfolioScreenState extends State<AddPortfolioScreen> {
                       controller: _aboutController,
                       maxLines: 6,
                       maxLength: maxLength,
-                      onChanged: (value) => setState(() {}),
                       decoration: InputDecoration(
                         hintText: AppTranslations.translateValue(
                           "Describe your portfolio work...",
@@ -167,10 +172,10 @@ class _AddPortfolioScreenState extends State<AddPortfolioScreen> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: Text(
-                        "$currentLength/$maxLength",
+                        "${currentLength.value}/$maxLength",
                         style: TextStyle(
                           fontSize: 12,
-                          color: currentLength > maxLength
+                          color: currentLength.value > maxLength
                               ? Colors.red
                               : Colors.grey,
                         ),
@@ -186,8 +191,8 @@ class _AddPortfolioScreenState extends State<AddPortfolioScreen> {
                         onPressed: controller.isLoading.value
                             ? null
                             : () async {
-                                if (beforeImage != null &&
-                                    afterImage != null &&
+                                if (beforeImage.value != null &&
+                                    afterImage.value != null &&
                                     _titleController.text.isNotEmpty &&
                                     _serviceTypeController.text.isNotEmpty &&
                                     _aboutController.text.isNotEmpty) {
@@ -195,20 +200,12 @@ class _AddPortfolioScreenState extends State<AddPortfolioScreen> {
                                     title: _titleController.text,
                                     serviceType: _serviceTypeController.text,
                                     about: _aboutController.text,
-                                    beforeImage: beforeImage!,
-                                    afterImage: afterImage!,
+                                    beforeImage: beforeImage.value!,
+                                    afterImage: afterImage.value!,
                                   );
 
                                   if (success) {
                                     Get.back();
-                                    Get.snackbar(
-                                      AppTranslations.translateValue("Success"),
-                                      AppTranslations.translateValue(
-                                        "Portfolio added successfully",
-                                      ),
-                                      backgroundColor: Colors.green,
-                                      colorText: Colors.white,
-                                    );
                                   }
                                 } else {
                                   Get.snackbar(
@@ -249,11 +246,6 @@ class _AddPortfolioScreenState extends State<AddPortfolioScreen> {
                 ),
               ),
             ),
-            if (controller.isLoading.value)
-              Container(
-                color: Colors.black.withOpacity(0.3),
-                child: const Center(child: CircularProgressIndicator()),
-              ),
           ],
         );
       }),

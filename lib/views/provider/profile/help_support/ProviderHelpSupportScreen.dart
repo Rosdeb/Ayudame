@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:middle_ware/core/theme/app_colors.dart';
-import 'package:middle_ware/views/provider/profile/ProviderFaqScreen.dart';
+import 'package:middle_ware/views/provider/profile/faq/ProviderFaqScreen.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 
-import 'ProviderContactUsScreen.dart';
+import '../ProviderContactUsScreen.dart';
 import 'package:middle_ware/core/localization/app_translations.dart';
 
 class ProviderHelpSupportScreen extends StatelessWidget {

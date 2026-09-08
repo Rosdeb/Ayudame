@@ -25,24 +25,43 @@ class ProfileController extends GetxController {
 
   Future<bool> hasInternetConnection() async {
     final connectivityResult = await Connectivity().checkConnectivity();
-    return connectivityResult != ConnectivityResult.none;
+    return !connectivityResult.contains(ConnectivityResult.none);
+  }
+
+  static const String _profileCacheKey = 'user_profile_cache';
+
+  Future<void> loadCachedProfile() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final cachedData = prefs.getString(_profileCacheKey);
+      if (cachedData != null && cachedData.isNotEmpty) {
+        final data = jsonDecode(cachedData);
+        user.value = UserModel.fromJson(data);
+      }
+    } catch (e) {
+      print("Error loading cached profile: $e");
+    }
   }
 
   Future<void> getProfile() async {
+    await loadCachedProfile();
+
     if (!await hasInternetConnection()) {
-      errorMessage.value = "No internet connection";
+      if (user.value == null) {
+        errorMessage.value = "No internet connection";
+      }
       return;
     }
 
     final token = await TokenService().getToken();
     print("Loaded token in ProfileController: $token");
     if (token == null || token.isEmpty) {
-      errorMessage.value = "No authentication token";
+      if (user.value == null) errorMessage.value = "No authentication token";
       return;
     }
 
     try {
-      isLoading(true);
+      if (user.value == null) isLoading(true);
 
       final response = await http.get(
         Uri.parse(profileUrl),
@@ -52,18 +71,18 @@ class ProfileController extends GetxController {
         },
       );
 
-      print("Status Code: ${response.statusCode}");
-      print("Response Body: ${response.body}");
-
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        // ✅ FIXED: Access the nested 'user' object
-        user.value = UserModel.fromJson(data['data']['user']);
+        final userData = data['data']['user'];
+        user.value = UserModel.fromJson(userData);
+
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(_profileCacheKey, jsonEncode(userData));
       } else {
-        Get.snackbar("Error", "Failed to load profile: ${response.statusCode}");
+        if (user.value == null) Get.snackbar("Error", "Failed to load profile: ${response.statusCode}");
       }
     } catch (e) {
-      Get.snackbar("Error", e.toString());
+      if (user.value == null) Get.snackbar("Error", e.toString());
     } finally {
       isLoading(false);
     }
@@ -71,87 +90,15 @@ class ProfileController extends GetxController {
 
 
   Future<void> fetchProfile() async {
-    print('ProfileController: fetchProfile() called');
-
-    if (!await hasInternetConnection()) {
-      print('ProfileController: No internet connection');
-      errorMessage.value = "No internet connection";
-      return;
-    }
-
-    final token = await TokenService().getToken();
-    if (token == null || token.isEmpty) {
-      print('ProfileController: No authentication token available');
-      errorMessage.value = "No authentication token";
-      return;
-    }
-
-    print('ProfileController: Fetching profile from: $profileUrl');
-    isLoading.value = true;
-    errorMessage.value = '';
-
-    try {
-      final response = await http.get(
-        Uri.parse(profileUrl),
-        headers: {
-          "Accept": "application/json",
-          "Authorization": "Bearer $token",
-        },
-      );
-
-      print('ProfileController: Response status: ${response.statusCode}');
-      print('ProfileController: Response body: ${response.body}');
-
-      if (response.statusCode != 200) {
-        final errorBody = response.body;
-        print('ProfileController: API Error - Status: ${response.statusCode}, Body: $errorBody');
-        errorMessage.value = "Failed to load profile: ${response.statusCode}";
-        return;
-      }
-
-      final jsonData = json.decode(response.body);
-      print('ProfileController: Parsed JSON: $jsonData');
-
-      if (jsonData["success"] == false) {
-        final errorMsg = jsonData["message"] ?? "Failed to load profile";
-        print('ProfileController: API returned success=false: $errorMsg');
-        errorMessage.value = errorMsg;
-        return;
-      }
-
-      final data = jsonData["data"];
-      if (data == null) {
-        print('ProfileController: No data field in response');
-        errorMessage.value = "No profile data received";
-        return;
-      }
-
-      // ✅ FIXED: Access the nested 'user' object
-      final userData = data["user"];
-      if (userData == null) {
-        print('ProfileController: No user data in response');
-        errorMessage.value = "No user data received";
-        return;
-      }
-
-      print('ProfileController: Creating UserModel from data: $userData');
-      user.value = UserModel.fromJson(userData); // ✅ Now passing correct data
-      print('ProfileController: Profile loaded successfully: ${user.value?.fullName}');
-      errorMessage.value = ''; // Clear any previous errors
-
-    } catch (e, stackTrace) {
-      print('ProfileController: Exception occurred: $e');
-      print('ProfileController: Stack trace: $stackTrace');
-      errorMessage.value = "Failed to load profile: $e";
-    } finally {
-      isLoading.value = false;
-      print('ProfileController: fetchProfile() completed. isLoading: ${isLoading.value}, profile: ${user.value != null ? "loaded" : "null"}');
-    }
+    print('ProfileController: fetchProfile() called, redirecting to getProfile()');
+    await getProfile();
   }
 
   Future<void> logout() async {
     await TokenService().clearToken();
     await StorageService.clearAll();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_profileCacheKey);
     Get.offAllNamed(AppRoutes.userTypeSelection);
   }
 }

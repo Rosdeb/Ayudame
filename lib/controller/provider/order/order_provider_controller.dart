@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:middle_ware/utils/token_service.dart';
 import 'package:middle_ware/models/provider/provider_booking_model.dart';
 import 'package:middle_ware/models/provider/provider_appointment_model.dart';
 
@@ -42,19 +41,8 @@ class OrderProviderController extends GetxController {
 
   Future<void> fetchAppointments() async {
     try {
-      String? token = await TokenService().getToken();
-      if (token == null || token.isEmpty) {
-        appointmentList.clear();
-        _appendError('Authorization token not found');
-        return;
-      }
-
-      var response = await http.get(
-        Uri.parse('${ApiService.BASE_URL}/api/providers/appointments'),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
+      var response = await ApiService.get(
+        endpoint: '/api/providers/appointments',
       );
 
       if (response.statusCode == 200) {
@@ -83,20 +71,8 @@ class OrderProviderController extends GetxController {
 
   Future<void> fetchBookings() async {
     try {
-      String? token = await TokenService().getToken();
-      if (token == null || token.isEmpty) {
-        allBookings.clear();
-        filterBookings();
-        _appendError('Authorization token not found');
-        return;
-      }
-
-      var response = await http.get(
-        Uri.parse('${ApiService.baseURL}/api/providers/bookings'),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
+      var response = await ApiService.get(
+        endpoint: '/api/providers/bookings',
       );
 
       if (response.statusCode == 200) {
@@ -301,26 +277,18 @@ class OrderProviderController extends GetxController {
 
     try {
       bookingActionInProgressIds.add(bookingId);
-      final token = await TokenService().getToken();
-      if (token == null || token.isEmpty) {
-        Get.snackbar('Error', 'Authorization token not found');
-        return false;
-      }
 
       late http.Response response;
-      final uri = Uri.parse('${ApiService.BASE_URL}$endpoint');
-      final headers = {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      };
 
       if (method == 'POST') {
-        response = await http.post(uri, headers: headers);
+        response = await ApiService.post(
+          endpoint: endpoint,
+          body: {},
+        );
       } else {
-        response = await http.patch(
-          uri,
-          headers: headers,
-          body: jsonEncode({}),
+        response = await ApiService.patch(
+          endpoint: endpoint,
+          body: {},
         );
       }
 
@@ -362,20 +330,10 @@ class OrderProviderController extends GetxController {
 
     try {
       appointmentActionInProgressIds.add(appointmentId);
-      final token = await TokenService().getToken();
-      if (token == null || token.isEmpty) {
-        Get.snackbar('Error', 'Authorization token not found');
-        return false;
-      }
 
-      final uri = Uri.parse('${ApiService.BASE_URL}$endpoint');
-      final response = await http.patch(
-        uri,
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(body),
+      final response = await ApiService.patch(
+        endpoint: endpoint,
+        body: body,
       );
 
       final decodedBody = _decodeMap(response.body);

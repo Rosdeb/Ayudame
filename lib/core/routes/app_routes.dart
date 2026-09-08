@@ -252,7 +252,7 @@ class AppRoutes {
       page: () => const ProviderVerificationCodeScreen(),
     ),
 
-    GetPage(name: providerHome, page: () => const HomeProviderScreen()),
+    GetPage(name: providerHome, page: () =>  HomeProviderScreen()),
     GetPage(name: providerProfile, page: () => ProviderProfilePage()),
     GetPage(
       name: providerCreateService,

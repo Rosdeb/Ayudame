@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:middle_ware/views/components/successbar.dart';
 import 'package:middle_ware/widgets/custom_appbar.dart';
 import '../../../../controller/provider/portfolio_controller.dart';
 import '../../../../models/provider/portfolio_model.dart';
@@ -203,14 +204,7 @@ class _EditPortfolioScreenState extends State<EditPortfolioScreen> {
 
                                 if (success) {
                                   Get.back();
-                                  Get.snackbar(
-                                    AppTranslations.translateValue("Success"),
-                                    AppTranslations.translateValue(
-                                      "Changes saved successfully!",
-                                    ),
-                                    backgroundColor: Colors.green,
-                                    colorText: Colors.white,
-                                  );
+                                  FloatingSuccessBar.show(context, message: AppTranslations.translateValue("Changes saved successfully!",));
                                 }
                               },
                         style: ElevatedButton.styleFrom(

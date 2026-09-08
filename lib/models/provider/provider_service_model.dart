@@ -14,6 +14,8 @@ class ProviderService {
   final String providerName;
   final String providerLocation;
   final String? providerProfilePicture;
+  final String? providerId;
+  final String? providerUserId;
 
   ProviderService({
     required this.id,
@@ -31,6 +33,8 @@ class ProviderService {
     required this.providerName,
     required this.providerLocation,
     this.providerProfilePicture,
+    this.providerId,
+    this.providerUserId,
   });
 
   factory ProviderService.fromJson(Map<String, dynamic> json) {
@@ -100,6 +104,8 @@ class ProviderService {
       providerProfilePicture:
           (json['providerProfilePicture'] ?? providerUser['profilePicture'])
               ?.toString(),
+      providerId: (providerIdObj['id'] ?? providerIdObj['_id'])?.toString(),
+      providerUserId: (providerUserObj['id'] ?? providerUserObj['_id'])?.toString(),
     );
   }
 

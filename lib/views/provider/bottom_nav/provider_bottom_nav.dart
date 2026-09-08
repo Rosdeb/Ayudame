@@ -9,32 +9,17 @@ import 'package:middle_ware/views/provider/profile/ProviderProfilePage.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../utils/app_icons.dart';
 import 'package:middle_ware/core/localization/app_translations.dart';
+import '../../../controller/provider/bottom_nav_controller.dart';
 
-class ProviderBottomNavScreen extends StatefulWidget {
-  const ProviderBottomNavScreen({super.key});
-
-  @override
-  State<ProviderBottomNavScreen> createState() =>
-      _ProviderBottomNavScreenState();
-}
-
-class _ProviderBottomNavScreenState extends State<ProviderBottomNavScreen> {
-  int selectedIndex = 0;
-
-  @override
-  void initState() {
-    super.initState();
+class ProviderBottomNavScreen extends StatelessWidget {
+  ProviderBottomNavScreen({super.key}) {
     final resolved = _resolveInitialIndex(Get.arguments);
     if (resolved != null) {
-      selectedIndex = resolved;
+      controller.selectedIndex.value = resolved;
     }
   }
 
-  void navigationItemTap(int index) {
-    setState(() {
-      selectedIndex = index;
-    });
-  }
+  final ProviderBottomNavController controller = Get.put(ProviderBottomNavController());
 
   final List<Widget> _pages = [
     HomeProviderScreen(),
@@ -44,85 +29,91 @@ class _ProviderBottomNavScreenState extends State<ProviderBottomNavScreen> {
   ];
 
   // Create nav items in a getter
-  List<BottomNavigationBarItem> get _navItems => [
+  List<BottomNavigationBarItem> _navItems(int selectedIndex) => [
     _navItem(
       AppIcons.userHomeIcon,
       AppIcons.userHomeIconS,
       AppTranslations.translateValue("bottom_nav.home"),
       0,
+      selectedIndex,
     ),
     _navItem(
       AppIcons.createIcon,
       AppIcons.crateIconS,
       AppTranslations.translateValue("provider.create_service"),
       1,
+      selectedIndex,
     ),
     _navItem(
       AppIcons.userOrderIcon,
       AppIcons.userOrderS,
       AppTranslations.translateValue("order.order_history"),
       2,
+      selectedIndex,
     ),
     _navItem(
       AppIcons.userProfile,
       AppIcons.userProfileS,
       AppTranslations.translateValue("bottom_nav.profile"),
       3,
+      selectedIndex,
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) {
-        if (didPop) return;
-        if (selectedIndex != 0) {
-          setState(() {
-            selectedIndex = 0;
-          });
-        }
-      },
-      child: Scaffold(
-        body: _pages[selectedIndex],
-        bottomNavigationBar: Container(
-          decoration: BoxDecoration(
-            color: Color(0xFFE7F4F6),
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20.r),
-              topRight: Radius.circular(20.r),
+    return Obx(() {
+      final selectedIndex = controller.selectedIndex.value;
+      
+      return PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          if (didPop) return;
+          if (selectedIndex != 0) {
+            controller.changeTabIndex(0);
+          }
+        },
+        child: Scaffold(
+          body: _pages[selectedIndex],
+          bottomNavigationBar: Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFFE7F4F6),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20.r),
+                topRight: Radius.circular(20.r),
+              ),
+              border: const Border(
+                top: BorderSide(color: Color(0xFFE3E6F0), width: 1),
+              ),
             ),
-            border: const Border(
-              top: BorderSide(color: Color(0xFFE3E6F0), width: 1),
+            height: MediaQuery.of(context).size.height * 0.12,
+            child: BottomNavigationBar(
+              elevation: 0,
+              type: BottomNavigationBarType.fixed,
+              currentIndex: selectedIndex,
+              selectedItemColor: AppColors.mainAppColor,
+              selectedLabelStyle: TextStyle(
+                fontFamily: 'SegeoUi_bold',
+                fontWeight: FontWeight.w700,
+                fontSize: 11,
+                color: AppColors.mainAppColor,
+              ),
+              unselectedLabelStyle: TextStyle(
+                fontFamily: 'SegeoUi_bold',
+                fontWeight: FontWeight.w600,
+                fontSize: 11,
+                color: AppColors.grey,
+              ),
+              showSelectedLabels: true,
+              unselectedItemColor: AppColors.grey,
+              backgroundColor: Colors.transparent,
+              onTap: controller.changeTabIndex,
+              items: _navItems(selectedIndex),
             ),
-          ),
-          height: MediaQuery.of(context).size.height * 0.12,
-          child: BottomNavigationBar(
-            elevation: 0,
-            type: BottomNavigationBarType.fixed,
-            currentIndex: selectedIndex,
-            selectedItemColor: AppColors.mainAppColor,
-            selectedLabelStyle: TextStyle(
-              fontFamily: 'SegeoUi_bold',
-              fontWeight: FontWeight.w700,
-              fontSize: 11,
-              color: AppColors.mainAppColor,
-            ),
-            unselectedLabelStyle: TextStyle(
-              fontFamily: 'SegeoUi_bold',
-              fontWeight: FontWeight.w600,
-              fontSize: 11,
-              color: AppColors.grey,
-            ),
-            showSelectedLabels: true,
-            unselectedItemColor: AppColors.grey,
-            backgroundColor: Colors.transparent,
-            onTap: navigationItemTap,
-            items: _navItems,
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   // 🎯 FIX: Simplified _navItem and added color logic for SVG
@@ -150,6 +141,7 @@ class _ProviderBottomNavScreenState extends State<ProviderBottomNavScreen> {
     String selected, // Only one path needed
     String label,
     int index,
+    int selectedIndex,
   ) {
     return BottomNavigationBarItem(
       // 🎯 FIX: Removed the unnecessary Column and SizedBox(height: 10.h)

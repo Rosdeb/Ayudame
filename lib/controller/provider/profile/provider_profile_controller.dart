@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../models/provider/provider_profile_model.dart';
 import '../../../services/api_service.dart';
-import '../../../utils/token_service.dart';
 import '../../../utils/constants.dart';
 
 class ProviderProfileController extends GetxController {
@@ -19,37 +18,45 @@ class ProviderProfileController extends GetxController {
     fetchProviderProfile();
   }
 
-  Future<void> fetchProviderProfile() async {
+  static const String _providerProfileCacheKey = 'provider_profile_cache';
+
+  Future<void> loadCachedProfile() async {
     try {
-      isLoading(true);
+      final prefs = await SharedPreferences.getInstance();
+      final cachedData = prefs.getString(_providerProfileCacheKey);
+      if (cachedData != null && cachedData.isNotEmpty) {
+        final data = jsonDecode(cachedData);
+        final model = ProviderProfileModel.fromJson(data);
+        providerProfile.value = model.data.provider;
+      }
+    } catch (e) {
+      print("Error loading cached provider profile: $e");
+    }
+  }
+
+  Future<void> fetchProviderProfile() async {
+    await loadCachedProfile();
+
+    try {
+      if (providerProfile.value == null) isLoading(true);
       errorMessage('');
 
-      final token = await TokenService().getToken();
-      if (token == null || token.isEmpty) {
-        errorMessage.value = "No authentication token";
-        return;
-      }
-
-      final response = await http.get(
-        Uri.parse(profileUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
+      final response = await ApiService.get(
+        endpoint: '/api/providers/me',
       );
-
-      print("Provider Profile Status: ${response.statusCode}");
-      print("Provider Profile Body: ${response.body}");
 
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
         final model = ProviderProfileModel.fromJson(body);
         providerProfile.value = model.data.provider;
+
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(_providerProfileCacheKey, response.body);
       } else {
-        errorMessage.value = "Failed to load provider profile";
+        if (providerProfile.value == null) errorMessage.value = "Failed to load provider profile";
       }
     } catch (e) {
-      errorMessage.value = e.toString();
+      if (providerProfile.value == null) errorMessage.value = e.toString();
       print("Error fetching provider profile: $e");
     } finally {
       isLoading(false);
@@ -66,12 +73,6 @@ class ProviderProfileController extends GetxController {
       isLoading(true);
       errorMessage('');
 
-      final token = await TokenService().getToken();
-      if (token == null || token.isEmpty) {
-        errorMessage.value = "No authentication token";
-        return false;
-      }
-
       final body = {
         'fullName': fullName,
         'phoneNumber': phoneNumber,
@@ -81,13 +82,9 @@ class ProviderProfileController extends GetxController {
 
       print("Update Provider Profile Request Body: ${jsonEncode(body)}");
 
-      final response = await http.put(
-        Uri.parse(profileUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode(body),
+      final response = await ApiService.put(
+        endpoint: '/api/providers/me',
+        body: body,
       );
 
       print("Update Provider Profile Status: ${response.statusCode}");
@@ -97,6 +94,10 @@ class ProviderProfileController extends GetxController {
         final responseBody = jsonDecode(response.body);
         final model = ProviderProfileModel.fromJson(responseBody);
         providerProfile.value = model.data.provider;
+
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(_providerProfileCacheKey, response.body);
+        
         return true;
       } else {
         // Try to parse error message from response
